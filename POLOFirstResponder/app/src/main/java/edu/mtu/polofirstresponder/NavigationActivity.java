@@ -43,7 +43,7 @@ public class NavigationActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map2);
+                .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
     }
@@ -84,17 +84,18 @@ public class NavigationActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        //view the map
+        if (id == R.id.nav_map) {
 
-        } else if (id == R.id.nav_slideshow) {
+        }
 
-        } else if (id == R.id.nav_manage) {
+        //change the settings
+        else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_share) {
+        }
 
-        } else if (id == R.id.nav_send) {
+        //log out the user
+        else if (id == R.id.nav_logout) {
 
         }
 
