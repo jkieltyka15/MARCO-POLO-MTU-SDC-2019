@@ -1,8 +1,14 @@
 package edu.mtu.polofirstresponder;
 
+import android.content.ClipData;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,8 +19,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private FirebaseAuth mAuth;                             //Firebase authenticator
+    private FirebaseAuth.AuthStateListener mAuthListener;   //Firebase authentication state listener
+    private static final String TAG = "Navigation";         //tag for logfile
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +44,31 @@ public class NavigationActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //if the user is currently not signed in, go to the sign in page
+        if ( FirebaseAuth.getInstance().getCurrentUser() == null ) {
+            this.startActivity(new Intent( NavigationActivity.this, LoginActivity.class ));
+            this.finish();
+        }
+
+        //Initialize Firebase and check to see the user's status
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                //current user is signed in
+                if (user != null) {
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                }
+
+                //user is currently not signed in
+                else {
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+            }
+        };
     }
 
     @Override
@@ -56,17 +94,33 @@ public class NavigationActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+
+        FragmentManager fragmentManager = this.getSupportFragmentManager(); //used to determine what fragment should be displayed
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        //go to the active shooter map fragment
+        if (id == R.id.nav_map) {
+            setTitle("Map");                                                                        //change the title to map
+            /*
+            fragmentManager.beginTransaction()
+                    .replace( R.id.container, new MapFragment())
+                    .commit();
+             */
+        }
 
-        } else if (id == R.id.nav_slideshow) {
+        //go to settings fragment
+        else if (id == R.id.nav_settings) {
+            setTitle("Settings");                                                                   //change the title to settings
+        }
 
-        } else if (id == R.id.nav_manage) {
-
+        //logout the current user
+        else if (id == R.id.nav_logout) {
+            setTitle("Log Out");                                                                    //change the title to log out
+            mAuth.signOut();                                                                        //sign out the Firebase user
+            startActivity(new Intent(NavigationActivity.this, LoginActivity.class));   //start the login activity
+            this.finish();                                                                          //end the current activity
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
