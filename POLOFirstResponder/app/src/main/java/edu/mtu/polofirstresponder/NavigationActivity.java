@@ -22,10 +22,12 @@ import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.karan.churi.PermissionManager.PermissionManager;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private PermissionManager permissionManager;            //used for checking permissions
     private FirebaseAuth mAuth;                             //Firebase authenticator
     private FirebaseAuth.AuthStateListener mAuthListener;   //Firebase authentication state listener
     private static final String TAG = "Navigation";         //tag for logfile
@@ -45,6 +47,9 @@ public class NavigationActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        permissionManager = new PermissionManager() {};
+        permissionManager.checkAndRequestPermissions(this);
 
         //if the user is currently not signed in, go to the sign in page
         if ( FirebaseAuth.getInstance().getCurrentUser() == null ) {
@@ -79,6 +84,11 @@ public class NavigationActivity extends AppCompatActivity
         fragmentManager.beginTransaction()                                 //change view to map
                 .replace(R.id.navBackground, new MapFragment())
                 .commit();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionManager.checkResult(requestCode,permissions,grantResults);
     }
 
     @Override

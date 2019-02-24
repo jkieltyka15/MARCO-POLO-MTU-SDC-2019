@@ -2,13 +2,17 @@ package edu.mtu.polofirstresponder;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -57,6 +61,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         MapsInitializer.initialize(getContext());
 
         mGoogleMap = googleMap;
-        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);     //set the view to satellite map
+
+        //check to see if location service is currently permitted
+        if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            googleMap.setMyLocationEnabled(true);                                 //show user location
+        }
+
+        //user has not permitted location, alert user to add location services permission
+        else {
+            Toast.makeText(getActivity(), "Please Enable Location Services", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private boolean checkPermission(String permission)
+    {
+        int res = getContext().checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
     }
 }

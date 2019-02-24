@@ -40,6 +40,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.karan.churi.PermissionManager.PermissionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,8 @@ import static android.Manifest.permission.READ_CONTACTS;
 
 public class LoginActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private FirebaseAuth mAuth;         //used for authenticating firebase users
+    private FirebaseAuth mAuth;                     //used for authenticating firebase users
+    private PermissionManager permissionManager;    //used for checking permissions
 
     private String TAG = "Login Activity"; //used for logging purposes
 
@@ -106,9 +108,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
+        permissionManager = new PermissionManager() {};
+        permissionManager.checkAndRequestPermissions(this);
+
         mAuth = FirebaseAuth.getInstance();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionManager.checkResult(requestCode,permissions,grantResults);
+    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
