@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -66,9 +67,18 @@ public class NavigationActivity extends AppCompatActivity
                 //user is currently not signed in
                 else {
                     Log.d(TAG, "onAuthStateChanged:signed_out");
+                    mAuth.signOut();                                                                        //sign out the Firebase user
+                    startActivity(new Intent(NavigationActivity.this, LoginActivity.class));   //start the login activity
                 }
             }
         };
+
+        //default view is map
+        FragmentManager fragmentManager = getSupportFragmentManager();     //used to determine what fragment should be displayed
+        setTitle("Map");                                                   //change the title to map
+        fragmentManager.beginTransaction()                                 //change view to map
+                .replace(R.id.navBackground, new MapFragment())
+                .commit();
     }
 
     @Override
@@ -95,7 +105,7 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
-        FragmentManager fragmentManager = this.getSupportFragmentManager(); //used to determine what fragment should be displayed
+        FragmentManager fragmentManager = getSupportFragmentManager(); //used to determine what fragment should be displayed
 
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -103,16 +113,17 @@ public class NavigationActivity extends AppCompatActivity
         //go to the active shooter map fragment
         if (id == R.id.nav_map) {
             setTitle("Map");                                                                        //change the title to map
-            /*
-            fragmentManager.beginTransaction()
-                    .replace( R.id.container, new MapFragment())
+            fragmentManager.beginTransaction()                                                      //change view to map
+                    .replace(R.id.navBackground, new MapFragment())
                     .commit();
-             */
         }
 
         //go to settings fragment
         else if (id == R.id.nav_settings) {
             setTitle("Settings");                                                                   //change the title to settings
+            fragmentManager.beginTransaction()                                                      //change view to settings
+                    .replace(R.id.navBackground, new SettingsFragment())
+                    .commit();
         }
 
         //logout the current user
