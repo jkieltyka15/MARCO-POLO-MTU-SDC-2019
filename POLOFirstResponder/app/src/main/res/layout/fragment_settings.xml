@@ -84,14 +84,14 @@
             android:layout_height="24dp" />
 
         <Switch
-            android:id="@+id/allSwitch"
+            android:id="@+id/marcoSwitch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/backgroundGray"
-            android:thumbTint="@color/colorPrimary"
-            android:textSize="24dp"
             android:switchMinWidth="56dp"
-            android:text="Display All" />
+            android:text="Display MARCOs"
+            android:textColor="@color/backgroundGray"
+            android:textSize="24dp"
+            android:thumbTint="@color/colorPrimary" />
 
         <Space
             android:layout_width="match_parent"
