@@ -1,4 +1,4 @@
-package com.jmcmichael.gunshotprocessor;
+package edu.mtu.polocivilian;
 
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -11,8 +11,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-
-import java.util.Map;
 
 
 public class AudioProcessor implements Runnable {
@@ -27,7 +25,7 @@ public class AudioProcessor implements Runnable {
     @Override
     public void run() {
         Timestamp timestamp = Timestamp.now();
-        boolean is_gunshot = YourClass.getInstance().run(sample_rate, buffer);
+        boolean is_gunshot = MainActivity.getInstance().shouldOverride() ? MainActivity.getInstance().getOverrideValue() : YourClass.getInstance().run(sample_rate, buffer);
         Location loc = MainActivity.getInstance().getLocation();
         GeoPoint location = new GeoPoint(loc.getLatitude(), loc.getLongitude());
 

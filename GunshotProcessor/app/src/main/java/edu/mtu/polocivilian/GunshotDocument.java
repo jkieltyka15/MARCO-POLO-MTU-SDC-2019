@@ -1,4 +1,4 @@
-package com.jmcmichael.gunshotprocessor;
+package edu.mtu.polocivilian;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.database.Exclude;

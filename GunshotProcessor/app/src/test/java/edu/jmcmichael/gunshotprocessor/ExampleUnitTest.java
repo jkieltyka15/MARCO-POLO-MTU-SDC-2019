@@ -1,4 +1,4 @@
-package com.jmcmichael.gunshotprocessor;
+package edu.jmcmichael.gunshotprocessor;
 
 import org.junit.Test;
 

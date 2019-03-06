@@ -1,4 +1,4 @@
-package com.jmcmichael.gunshotprocessor;
+package edu.mtu.polocivilian;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;

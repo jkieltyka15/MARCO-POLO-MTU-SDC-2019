@@ -1,4 +1,4 @@
-package com.jmcmichael.gunshotprocessor;
+package edu.mtu.polocivilian;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -10,13 +10,15 @@ import android.location.LocationManager;
 import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioTrack;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     AudioTrack audioTrack;
     boolean playing;
+    boolean override;
+    boolean overrideValue;
 
 
     protected static MainActivity getInstance() {
@@ -171,6 +175,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         findViewById(R.id.btnStart).setOnClickListener(btnClick);
         findViewById(R.id.btnStop).setOnClickListener(btnClick);
         findViewById(R.id.btnPlay).setOnClickListener(btnClick);
+        ((Switch)findViewById(R.id.sw_override)).setOnCheckedChangeListener(switchClick);
+        ((Switch)findViewById(R.id.sw_override_value)).setOnCheckedChangeListener(switchClick);
     }
 
     private void enableButton(int id, boolean isEnable) {
@@ -180,6 +186,33 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private void enableButtons(boolean isRecording) {
         enableButton(R.id.btnStart, !isRecording);
         enableButton(R.id.btnStop, isRecording);
+    }
+    private CompoundButton.OnCheckedChangeListener switchClick = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            switch (buttonView.getId()) {
+                case R.id.sw_override: {
+                    override = isChecked;
+                    Switch sw = findViewById(R.id.sw_override_value);
+                    sw.setChecked(true);
+                    View s = findViewById(R.id.sw_override_value);
+                    s.setVisibility(View.VISIBLE);
+                    enableButton(R.id.sw_override_value, isChecked);
+                }
+                case R.id.sw_override_value: {
+                    overrideValue = isChecked;
+                }
+            }
+
+        }
+    };
+    public boolean shouldOverride() {
+
+        return override;
+    }
+    public boolean getOverrideValue() {
+
+        return overrideValue;
     }
 
     private View.OnClickListener btnClick = new View.OnClickListener() {
