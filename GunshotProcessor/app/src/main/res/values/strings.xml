@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">GunshotProcessor</string>
+    <string name="strStop">Stop!</string>
+    <string name="strStart">Start!</string>
+    <string name="auth_success">Authentication Successful</string>
+    <string name="auth_failure">Authentication Failed. Restart, perhaps?</string>
+    <string name="auth_status">Not Yet Authenticated</string>
+    <string name="play_last_recording">Play</string>
+    <string name="lblLastTimestamp">Last Timestamp:</string>
+    <string name="lblLatitude">Last Latitude:</string>
+    <string name="lblLongitude">Last Longitude:</string>
+    <string name="lblResult">Last Processing Result:</string>
+</resources>

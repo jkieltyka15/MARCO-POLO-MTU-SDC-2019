@@ -1,0 +1,22 @@
+AndroidManifest:
+    Required Permissions:
+        <uses-permission android:name="android.permission.RECORD_AUDIO" />
+            Required for recording audio
+        <uses-permission android:name="android.permission.INTERNET" />
+            Required for sending data to Firebase
+        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            Required for Location Services
+
+Firebase Setup:
+    This was setup on a Free Tier of Firebase.
+    The best way to configure this for you Firebase Instance is to follow
+        Android Studio's Firebase Setup Instructions (Tools -> Firebase -> Firestore)
+    You will need your own google-services.json file and any additional configuration as required.
+    Firebase Authentication is configured as Anonymous. If user tracking is required,
+        then this will need to be modified.
+
+
+On / Off toggling via Firebase is currently unimplemented.
+    This can be done via Firebase Cloud Messaging, but was not pursued
+        because framework for recording and processing was prioritized.
+

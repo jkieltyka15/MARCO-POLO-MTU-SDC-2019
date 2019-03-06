@@ -1,0 +1,123 @@
+Constants:
+    RECORDER_SAMPLERATE: Frequency (HZ) of AudioRecord sampling
+    RECORDER_SAMPLE_DURATION_MS: Duration of audio clip processed
+
+    RECORDER_CHANNELS: How many channels are encoded by AudioRecord
+        Recommendation: Unless multiple channels are required, this should be left as-is.
+    RECORDER_AUDIO_ENCODING: How many bits are used and what format is used to encode incoming audio
+        Recommendation: If you need to change this,
+            I will need to refactor AudioCollector and AudioProcessor
+            to support the new size of each sample.
+
+    PERMISSIONS_REQUEST_ALL: Arbitrary value used to track what permissions request was received.
+
+
+YourClass:
+    Example Class, designed to be simple to implement your processing code within / over.
+
+
+MainActivity:
+    The primary class in the application. Manages the UI, Permissions and Location Service.
+
+    AudioTrack was implemented for testing purposes. The `Play` button plays back the most recent batch of recorded audio.
+
+    Wire-up from the UI to AudioCollector is not required; AudioCollector can be set to automatically begin in `configure`.
+
+    Permissions:
+        RECORD_AUDIO: Required to record audio.
+        INTERNET: Required to send data to Firebase.
+        ACCESS_FINE_LOCATION: Required for precise location services.
+            ACCESS_COURSE_LOCATION can be used in case high precision is not desired.
+
+    onCreate:
+        called when the app is opened. Any initial setup of services (Firebase, Location, etc) should belong here
+
+    onStart:
+        Called when the app becomes visible. This is between onCreate and when the user can interact with the app.
+        Should setup anything after onCreate that is not restricted by permissions.
+
+    checkPermissions:
+        Called during onCreate to check all required permissions.
+
+    onRequestPermissionsResult:
+        Called once the user has accepted/denied all requests for permissions.
+        If Setup / User Interaction / Standard Operation depends on permissions, it should go into configure().
+
+    configure:
+        Called to setup anything that is restricted by permissions.
+        Location Services and Audio are the primary items.
+
+    checkEnableButtons:
+        Runs once.
+        Enables usage of Start / Stop buttons.
+
+    setButtonHandlers:
+        Wires up UI Buttons to the appropriate actions in btnClick.
+
+    updateUI:
+        Updates the UI with the most recent processing result.
+        Called by AudioProcessor.
+
+    getLocation:
+        Returns the most recently updated location.
+
+    onLocationChanged, onProviderDisabled, onProviderEnabled, onStatusChanged:
+        Logging functions for the Location Service.
+        `onLocationChanged` sets the location to be sent to Firebase.
+
+
+AudioCollector:
+    recording_ms: See Constants.
+    sample_rate: See Constants
+
+    listener:
+        Every ~recording_ms, reads the last recording_ms worth of samples into a buffer,
+            and starts a thread to process it.
+
+    startRecording:
+        creates a new AudioRecord and begins listening to the microphone.
+
+    stopRecording:
+        stops the AudioRecord from recording.
+
+    isRecording:
+        whether startRecording or stopRecording was last called. Default: false.
+
+    getRecordingMs, getSampleRate, getSamplesPerProcessingBuffer:
+        Returns the appropriate internal variable.
+
+    setRecordingMs, setSampleRate:
+        Sets the appropriate variable, and restarts the AudioRecord.
+
+    getLastRecording:
+        Returns the most recent AudioRecord buffer.
+
+
+AudioProcessor:
+    buffer: recording_ms long buffer of sound audio from AudioCollector.
+    sample_rate: See Constants.
+
+    run:
+        Collects the following information:
+            Timestamp: Current Time
+            Location: Current Location provided by Location Services
+            Audio_Blob: Base 64 encoded audio data from buffer
+            Is_Gunshot: Whether or not YourClass says the audio contains a gunshot
+            Sample_Rate: See Constants
+
+        Uses the FirebaseFirestore API to put the above in a document
+            in the processedAudio collection.
+
+        RECOMMENDATION:
+            Once you no longer require testing for false negatives, only send requests to Firebase when a gunshot is detected.
+            That way, you will stay under the Free-Tier write limit (20k/day)
+
+
+GunshotDocument:
+    Contains the information described above in `AudioProcessor.run`
+
+
+Utils:
+    short_to_byte:
+        Helper function for preparing audio data for Base 64 encoding
+        Note: Low byte is encoded first
