@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context="edu.mtu.polocivilian.MainActivity">
 
     <Button
         android:id="@+id/btnStart"
@@ -115,5 +115,31 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtLongitude" />
+
+    <Switch
+    android:id="@+id/sw_override_value"
+    android:layout_width="161dp"
+    android:layout_height="28dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:text="Gunshot Detected"
+    android:textStyle="bold"
+    android:enabled="false"
+    android:checked="true"
+    android:visibility="gone"
+    app:layout_constraintStart_toStartOf="@+id/sw_override"
+    app:layout_constraintTop_toBottomOf="@+id/sw_override" />
+
+    <Switch
+        android:id="@+id/sw_override"
+        android:layout_width="176dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:checked="false"
+        android:text="Manual Detection"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/lblResult"
+        app:layout_constraintTop_toBottomOf="@+id/lblResult"/>
 
 </android.support.constraint.ConstraintLayout>
