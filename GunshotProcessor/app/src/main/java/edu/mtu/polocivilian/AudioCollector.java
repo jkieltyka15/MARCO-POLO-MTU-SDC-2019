@@ -38,6 +38,7 @@ public class AudioCollector {
             recorder.read(buffer, 0, samples_per_processing_buffer);
 
             last_recording = buffer;
+            System.out.println("Last Recording set to buffer. Length of Last Recording: " +last_recording.length);
 
             Thread processingThread = new Thread(new AudioProcessor(sample_rate, buffer));
 

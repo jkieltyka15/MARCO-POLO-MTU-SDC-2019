@@ -22,15 +22,17 @@ public class YourClass {
             audioComplex[i] = new Complex(audio[i], 0);
         }
         boolean gunshot = false;
+        boolean triggeredFFT = false;
         /* This is the main portion of the gunshot classification. It checks the values of the microphone if they are
          * greater than a certain threshold. If so perform a FFT and then determine if any of those values are
          * greater than a threshold. If they are it classifies it as a gunshot and breaks out of the loop.
          *
          */
-        for (int k = 0; k < audioComplex.length && !gunshot; k++) {
+        for (int k = 0; k < audioComplex.length && !triggeredFFT; k++) {
             //Determine if there is a sound significant enough to investigate
             //Buffer contains values from -32,000 to +32,000. set our threshold to 80%
             if (audioComplex[k].abs() > 25600) {
+                triggeredFFT = true;
                 //for the FFT audioComplex must be a power of 2. With our current sample rate we
                 //end up with an audioComplex length of 65532, manually add the values to get to
                 //a length that is a power of 2.
@@ -58,7 +60,11 @@ public class YourClass {
                 }
 
             }
+            System.out.println("Still in Voltage Loop");
+
         }
+
+        System.out.println("Done with Gunshot Classification Class");
         return gunshot;
     }
 }
