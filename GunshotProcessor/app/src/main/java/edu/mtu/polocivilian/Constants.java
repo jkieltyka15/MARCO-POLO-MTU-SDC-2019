@@ -7,7 +7,7 @@ public class Constants {
     /// All Android Phones support 44100, but most support other rates.
     protected static final int RECORDER_SAMPLERATE = 44100;
     /// How long (in ms) the sample sent for processing will be
-    protected static final int RECORDER_SAMPLE_DURATION_MS = 2000;
+    protected static final int RECORDER_SAMPLE_DURATION_MS = 1486;
 
     /// Required configuration for AudioRecord
     ///     If RECORDER_AUDIO_ENCODING is changed then the

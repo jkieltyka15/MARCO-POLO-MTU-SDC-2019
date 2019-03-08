@@ -20,6 +20,7 @@ public class AudioProcessor implements Runnable {
     public AudioProcessor(int sample_rate, @NonNull short[] buffer) {
         this.sample_rate = sample_rate;
         this.buffer = buffer;
+
     }
 
     @Override
@@ -56,3 +57,6 @@ public class AudioProcessor implements Runnable {
                 });
     }
 }
+
+
+

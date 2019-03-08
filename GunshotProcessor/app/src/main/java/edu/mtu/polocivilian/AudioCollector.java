@@ -34,7 +34,7 @@ public class AudioCollector {
 
         @Override
         public void onPeriodicNotification(AudioRecord recorder) {
-            final short[] buffer = new short[samples_per_processing_buffer];
+            final short[] buffer = new short[samples_per_processing_buffer+4];
             recorder.read(buffer, 0, samples_per_processing_buffer);
 
             last_recording = buffer;
