@@ -1,5 +1,3 @@
-package edu.mtu.polofirstresponder;
-
 /**
  * Generic design for the user structure for sending data regarding a POLO user to the firebase. As
  * well as providing a structure for receiving data regarding a POLO user from the firebase.
