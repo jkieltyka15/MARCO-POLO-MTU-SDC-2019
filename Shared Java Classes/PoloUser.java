@@ -1,63 +1,55 @@
-/**
- * Generic design for the user structure for sending data regarding a POLO user to the firebase. As
- * well as providing a structure for receiving data regarding a POLO user from the firebase.
- */
-public class PoloUser {
+import com.google.android.gms.maps.model.LatLng;
 
-    //user information
-    public static final char responder = 0; //constant for responder user type
-    public static final char civilian = 1;  //constant for civilian user type
-    private char type;                      //user is either responder or civilian
-    private String id;                      //users ID
+public class PoloUser{
 
-    //user location information
-    private double lat;
-    private double lon;
+    //the type of account associated with the user
+    public static final int CIVILIAN = 0;
+    public static final int FIRST_RESPONDER = 1;
+    int type;
 
-    //gunshot information
-    private char gunshot = 0;   //placeholder for if a gunshot was detected and how long ago it was
+    String userID;      //the id of the current user
+    LatLng position;    //the user's current position
+    int gunshot;        //the status of if a gunshot is heard (0 = no gunshot)
 
     /**
-     * Construct a PoloUser object.
-     * @param type - The type of account (responder or civilian).
-     * @param id - The username of the account (anonymous or email).
+     * Construct a PoloUser object that can be written to Firebase.
+     * @param type - The type of account to associate with the user.
+     * @param userID - The username of the user (anonymous ID or email ID)
      */
-    public PoloUser(char type, String id) {
+    public PoloUser(int type, String userID){
 
-        setType(type);          //set the user type
-        setId(id);              //set the username/id
-        setLat(0);              //set default latitude value
-        setLon(0);              //set default longitude value
-        setGunshot((char)0);    //set gunshot to no triggered
+        this.type = type;       //set the account type
+        this.userID = userID;   //set the userID
+
+        //set default location and gunshot values
+        position = new LatLng(0,0);
+        gunshot = 0;
     }
 
     /**
-     *
-     * @param type - The type of account (responder or civilian).
-     * @param id - The username of the account (anonymous or email).
-     * @param lat - The latitude of the user.
-     * @param lon - The longitude of the user.
+     * Construct a PoloUser object that can be written to Firebase.
+     * @param type - The type of account to associate with the user.
+     * @param userID - The username of the user (anonymous ID or email ID)
+     * @param position - The current position of the user.
      */
-    public PoloUser(char type, String id, double lat, double lon) {
+    public PoloUser(int type, String userID, LatLng position){
 
-        setType(type);          //set the user type
-        setId(id);              //set the username/id
-        setLat(lat);            //set default latitude value
-        setLon(lon);            //set default longitude value
-        setGunshot((char)0);    //set gunshot to no triggered
+        this.type = type;           //set the account type
+        this.userID = userID;       //set the userID
+        this.position = position;   //set the user's current position
+
+        gunshot = 0;    //set default gunshot value (no gunshot detected)
     }
 
-    /*** Setter Methods ***/
-    public void setType(char type){this.type = type;}               //set user type
-    public void setId(String id){this.id = id;}                     //set user id
-    public void setLat(double lat){this.lat = lat;}                 //set user's latitude
-    public void setLon(double lon){this.lon = lon;}                 //set user's longitude
-    public void setGunshot(char gunshot){this.gunshot = gunshot;}   //get the gunshot status
+    /*** Setter Functions ***/
+    public void setType(int type){this.type = type;}                        //set the account type to associate with the user
+    public void setUserID(String userID){this.userID = userID;}             //set the id for the user (anonymous or email)
+    public void setPosition(LatLng position){this.position = position;}     //set the user's position
+    public void setGunshot(int gunshot){this.gunshot = gunshot;}            //set the gunshot status
 
-    /*** Getter Methods ***/
-    public char getType(){return type;}             //get the user type
-    public String getId(){return id;}               //get the user id
-    public double getLat(){return lat;}             //get the user's latitude
-    public double getLon(){return lon;}             //get the user's longitude
-    public char getGunshot(){return gunshot;}       //get the user's gunshot status
+    /*** Getter Functions ***/
+    public int getType(){return type;}              //return the account type to associate with the user
+    public String getUserID(){return userID;}       //return the user id (anonymous or email)
+    public LatLng getPosition(){return position;}   //return the user's position
+    public int getGunshot(){return gunshot;}        //return the gunshot status (0 = no gunshot)
 }

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,17 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -22,8 +34,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
+    //lists for getting data from Firebase
+    ArrayList<PoloUser> firstResponders;
+    ArrayList<PoloUser> civilians;
+    ArrayList<PoloUser> marcos;
+
+    //map data members
     private GoogleMap mGoogleMap; //the situation overlook map
     private MapView mMapView;
+
+    //view
     private View mView;
 
     public MapFragment() {
@@ -42,6 +62,46 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         super.onViewCreated(view, savedInstanceState);
 
+        //initialize the Firebase
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        //setup listener for firebase real-time database changes for First Responders
+        database.getReference("FirstResponder").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                firstResponders = dataSnapshot.getValue(new GenericTypeIndicator<ArrayList<PoloUser>>(){});
+
+                /*** Update Map Markers ***/
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        //setup listener for firebase real-time database changes for Civilians
+        database.getReference("Civilians").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                civilians = dataSnapshot.getValue(new GenericTypeIndicator<ArrayList<PoloUser>>(){});
+
+                /*** Update Map Markers ***/
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        //setup and display the map
         mMapView = mView.findViewById(R.id.map);
         if(mMapView != null){
             mMapView.onCreate(null);
