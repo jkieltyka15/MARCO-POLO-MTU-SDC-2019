@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, LocationListener {
     private static MainActivity INSTANCE;
@@ -236,6 +237,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     audioTrack.write(recorder.getLastRecording(), 0, recorder.getSamplesPerProcessingBuffer());
                     audioTrack.play();
                     playing = true;
+
+                    System.out.println(Arrays.toString(recorder.getLastRecording()));
                 }
             }
         }

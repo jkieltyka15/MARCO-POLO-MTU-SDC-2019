@@ -34,10 +34,11 @@ public class AudioCollector {
 
         @Override
         public void onPeriodicNotification(AudioRecord recorder) {
-            final short[] buffer = new short[samples_per_processing_buffer];
+            final short[] buffer = new short[samples_per_processing_buffer+4];
             recorder.read(buffer, 0, samples_per_processing_buffer);
 
             last_recording = buffer;
+            System.out.println("Last Recording set to buffer. Length of Last Recording: " +last_recording.length);
 
             Thread processingThread = new Thread(new AudioProcessor(sample_rate, buffer));
 
