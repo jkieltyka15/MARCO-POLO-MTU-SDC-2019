@@ -74,6 +74,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 firstResponders = dataSnapshot.getValue(new GenericTypeIndicator<ArrayList<PoloUser>>(){});
 
                 /*** Update Map Markers ***/
+                if(firstResponders != null){
+
+                }
             }
 
             @Override
@@ -92,6 +95,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 civilians = dataSnapshot.getValue(new GenericTypeIndicator<ArrayList<PoloUser>>(){});
 
                 /*** Update Map Markers ***/
+                if(civilians != null){
+
+                }
             }
 
             @Override
