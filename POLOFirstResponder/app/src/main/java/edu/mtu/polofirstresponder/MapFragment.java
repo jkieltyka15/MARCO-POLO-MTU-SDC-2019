@@ -17,6 +17,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,13 +36,14 @@ import static android.content.ContentValues.TAG;
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     //lists for getting data from Firebase
-    ArrayList<PoloUser> firstResponders;
-    ArrayList<PoloUser> civilians;
-    ArrayList<PoloUser> marcos;
+    private static ArrayList<PoloUser> firstResponders;
+    private static ArrayList<PoloUser> civilians;
+    private static ArrayList<PoloUser> marcos;
 
     //map data members
     private GoogleMap mGoogleMap; //the situation overlook map
     private MapView mMapView;
+    private ArrayList<PoloMapMarker> markers;
 
     //view
     private View mView;
@@ -62,6 +64,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         super.onViewCreated(view, savedInstanceState);
 
+        //initialize the map marker arraylist
+        markers = new ArrayList<>();
+
+        /*** Populate the map with markers that already exist ***/
+
         //initialize the Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -73,8 +80,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 // whenever data at this location is updated.
                 firstResponders = dataSnapshot.getValue(new GenericTypeIndicator<ArrayList<PoloUser>>(){});
 
-                /*** Update Map Markers ***/
+                //update map markers
                 if(firstResponders != null){
+
+                    //check to see if marker already exists
+
+                    //marker does not exist create new marker
+
+                    //marker exists, update marker
 
                 }
             }
@@ -94,8 +107,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 // whenever data at this location is updated.
                 civilians = dataSnapshot.getValue(new GenericTypeIndicator<ArrayList<PoloUser>>(){});
 
-                /*** Update Map Markers ***/
+                //update map markers
                 if(civilians != null){
+
+                    //check to see if marker already exists
+
+                    //marker does not exist create new marker
+
+                    //marker exists, update marker
 
                 }
             }
