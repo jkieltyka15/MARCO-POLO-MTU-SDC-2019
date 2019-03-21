@@ -32,6 +32,7 @@ public class YourClass {
             //Determine if there is a sound significant enough to investigate
             //Buffer contains values from -32,000 to +32,000. set our threshold to 80%
             if (audioComplex[k].abs() > 25600) {
+                System.out.println(audioComplex);
                 triggeredFFT = true;
                 //for the FFT audioComplex must be a power of 2. With our current sample rate we
                 //end up with an audioComplex length of 65532, manually add the values to get to
@@ -44,16 +45,28 @@ public class YourClass {
                 //END
                 System.out.println("FFT Analysis Triggered");
                 Complex[] audioFFT = FFT.fft(audioComplex);
+                System.out.println(audioFFT);
                 System.out.println("FFT Complete, beginning loop");
 
 
-                //only going to the 5000th bin in the FFT, everything else has minimal probability of being a gunshot
-                for (int j = 0; j < 5000; j++) {
+                //only going from the 600 the 5000th bin in the FFT, everything else has minimal probability of being a gunshot
+                //and we can eliminate false positives that occur at the 0 and low freq
+                for (int j = 600; j < 5000; j++) {
                     System.out.println("FFT loop analysis iteration: " +j);
                     //Sound has enough power to be a gunshot by fft
-                    //28 million is just a ratio (0.8 to 900 as 26500 is to 28 million
-                    //This might not be the right threshold
-                    if (audioFFT[j].abs() > 28000000) {
+                    //28 million is just a ratio (0.8 to 26500 as 900 is to 28 million
+                    /* this might not be the correct threshold or the right way to determine it. When
+                    we determined the limit our mic threshold was 0.8 and 600 for the FFT with a max mic value of 1 from the mic.
+                    When we do it here
+                    our values have a max of 32,000 so we take .8 of that and then use the ratio of 0.8 to 26500
+                    as 700/900/350 is to ___ to determine the threshold. If the FFT does not translate it the same
+                    as it did in MATLAB  our ratio will not suffice to determine the threshold.
+                    We would need to print the gunshot values from the mic for an actual gunshot and redetermine thresholds.
+                     */
+                    //900 limit is 28,000,000
+                    //350 limit is 12,000,000
+                    //700 limit is 23,000,000
+                    if (audioFFT[j].abs() > 23000000) {
                         gunshot = true;
                         return gunshot;
                     }

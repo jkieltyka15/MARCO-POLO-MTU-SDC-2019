@@ -26,7 +26,7 @@ public class GunshotDocument {
         this.sample_rate = sample_rate;
         this.is_gunshot = is_gunshot;
         this.location = location;
-        this.audio = audio;
+        //this.audio = audio; *do not want to send this audio anymore
     }
 
     @Exclude
@@ -36,7 +36,7 @@ public class GunshotDocument {
         result.put("sample_rate", sample_rate);
         result.put("is_gunshot", is_gunshot);
         result.put("location", location);
-        result.put("audio", audio);
+        //result.put("audio", audio);
 
         return result;
     }
