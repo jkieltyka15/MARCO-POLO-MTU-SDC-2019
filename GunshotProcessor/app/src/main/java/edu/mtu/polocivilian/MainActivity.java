@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     private AudioCollector recorder;
     private LocationManager locationManager;
-    private FirebaseAuth mAuth;
+    public FirebaseAuth mAuth;
 
     private Location location = null;
     private boolean setupComplete = false;
