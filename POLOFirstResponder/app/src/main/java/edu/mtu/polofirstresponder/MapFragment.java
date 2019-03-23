@@ -5,6 +5,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,16 +17,27 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
@@ -35,15 +47,10 @@ import static android.content.ContentValues.TAG;
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    //lists for getting data from Firebase
-    private static ArrayList<PoloUser> firstResponders;
-    private static ArrayList<PoloUser> civilians;
-    private static ArrayList<PoloUser> marcos;
-
     //map data members
     private GoogleMap mGoogleMap; //the situation overlook map
     private MapView mMapView;
-    private ArrayList<PoloMapMarker> markers;
+    private Map<String, Marker> markers;    //keep track of google markers
 
     //view
     private View mView;
@@ -65,66 +72,129 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState);
 
         //initialize the map marker arraylist
-        markers = new ArrayList<>();
+        markers = new HashMap<String, Marker>();
 
         /*** Populate the map with markers that already exist ***/
 
-        //initialize the Firebase
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //initialize the Firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        //setup listener for firebase real-time database changes for First Responders
-        database.getReference("FirstResponder").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                firstResponders = dataSnapshot.getValue(new GenericTypeIndicator<ArrayList<PoloUser>>(){});
+        /**
+         * Resource: https://firebase.google.com/docs/firestore/query-data/listen
+         */
+        //monitor all changes for civilians
+        db.collection("Civilians")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
 
-                //update map markers
-                if(firstResponders != null){
+                        //check the status of the listen
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
 
-                    //check to see if marker already exists
+                        //Cycle through all documents that were changed and update the map
+                        for (QueryDocumentSnapshot doc : value) {
 
-                    //marker does not exist create new marker
+                            //check to see if the doc is available
+                            if (doc != null) {
 
-                    //marker exists, update marker
+                                //create the PoloUser that is associated with this account
+                                Map<String, Double> position = (Map<String, Double>)doc.get("position");
+                                PoloUser tmp = new PoloUser(doc.getLong("type").intValue(),
+                                        doc.get("userID", String.class),
+                                        new LatLng(position.get("latitude"), position.get("longitude")));
+                                tmp.setGunshot(doc.getLong("gunshot").intValue());
 
-                }
-            }
+                                //place the Google Maps marker and add it to the HashMap
+                                switch(tmp.getGunshot()){
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
+                                    //no gunshot detected
+                                    default:
+                                        markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                .position(tmp.getPosition())
+                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
+                                        break;
 
-        //setup listener for firebase real-time database changes for Civilians
-        database.getReference("Civilians").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                civilians = dataSnapshot.getValue(new GenericTypeIndicator<ArrayList<PoloUser>>(){});
+                                    //gunshot was recently detected
+                                    case 1:
+                                        markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                .position(tmp.getPosition())
+                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))));
+                                        break;
 
-                //update map markers
-                if(civilians != null){
+                                    //gunshot has been detected
+                                    case 2:
+                                        markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                .position(tmp.getPosition())
+                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                                        break;
+                                }
 
-                    //check to see if marker already exists
+                            }
+                        }
+                    }
+                });
 
-                    //marker does not exist create new marker
+        //monitor all changes for first responders
+        /*
+        db.collection("FirstResponders")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
 
-                    //marker exists, update marker
+                        //check the status of the listen
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
 
-                }
-            }
+                        //Cycle through all documents that were changed and update the map
+                        for (QueryDocumentSnapshot doc : value) {
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
+                            //check to see if the doc is available
+                            if (doc != null) {
+
+                                //create the PoloUser that is associated with this account
+                                Map<String, Double> position = (Map<String, Double>)doc.get("position");
+                                PoloUser tmp = new PoloUser(doc.getLong("type").intValue(),
+                                        doc.get("userID", String.class),
+                                        new LatLng(position.get("latitude"), position.get("longitude")));
+                                tmp.setGunshot(doc.getLong("gunshot").intValue());
+
+                                //place the Google Maps marker and add it to the HashMap
+                                switch(tmp.getGunshot()){
+
+                                    //no gunshot detected
+                                    default:
+                                        markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                .position(tmp.getPosition())
+                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
+                                        break;
+
+                                    //gunshot was recently detected
+                                    case 1:
+                                        markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                .position(tmp.getPosition())
+                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))));
+                                        break;
+
+                                    //gunshot has been detected
+                                    case 2:
+                                        markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                .position(tmp.getPosition())
+                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                                        break;
+                                }
+
+                            }
+                        }
+                    }
+                });
+        */
 
         //setup and display the map
         mMapView = mView.findViewById(R.id.map);
