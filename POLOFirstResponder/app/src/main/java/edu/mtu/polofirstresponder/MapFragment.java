@@ -26,9 +26,12 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -70,15 +73,222 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         //Google Maps view
         MapView mMapView;
 
+        //setup and display the map
+        mMapView = mView.findViewById(R.id.map);
+        if(mMapView != null){
+            mMapView.onCreate(null);
+            mMapView.onResume();
+            mMapView.getMapAsync(this);
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        MapsInitializer.initialize(getContext());
+
+        mGoogleMap = googleMap;                                 //initialize the Google map
+        LocationManager locationManager;                        //used for getting user's current location
+        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);     //set the view to satellite map
+
         //initialize the map marker arraylist
         markers = new HashMap<String, Marker>();
 
         //initialize the Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        /*
-         * Resource: https://firebase.google.com/docs/firestore/query-data/listen
-         */
+        //retrieve all civilian users
+        db.collection("Civilians")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            try {
+                                //Cycle through all documents that were changed and update the map
+                                for (QueryDocumentSnapshot doc : task.getResult()) {
+
+                                    //check to see if the doc is available
+                                    if (doc != null) {
+
+                                        //create the PoloUser that is associated with this account
+                                        Map<String, Double> position = (Map<String, Double>) doc.get("position");
+                                        PoloUser tmp = new PoloUser(doc.getLong("type").intValue(),
+                                                doc.get("userID", String.class),
+                                                new LatLng(position.get("latitude"), position.get("longitude")));
+                                        tmp.setGunshot(doc.getLong("gunshot").intValue());
+
+                                        //place the Google Maps marker and add it to the HashMap
+                                        switch (tmp.getGunshot()) {
+
+                                            //no gunshot detected
+                                            default:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
+                                                break;
+
+                                            //gunshot was recently detected
+                                            case 1:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))));
+                                                break;
+
+                                            //gunshot has been detected
+                                            case 2:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                            //null pointer exception received
+                            catch(Exception nullRef){
+                                Log.w(TAG, "POJO Conversion failed.", nullRef);
+                            }
+                        }
+                        else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+        //retrieve all First Responders
+        db.collection("FirstResponders")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            try {
+                                //Cycle through all documents that were changed and update the map
+                                for (QueryDocumentSnapshot doc : task.getResult()) {
+
+                                    //check to see if the doc is available
+                                    if (doc != null) {
+
+                                        //create the PoloUser that is associated with this account
+                                        Map<String, Double> position = (Map<String, Double>) doc.get("position");
+                                        PoloUser tmp = new PoloUser(doc.getLong("type").intValue(),
+                                                doc.get("userID", String.class),
+                                                new LatLng(position.get("latitude"), position.get("longitude")));
+                                        tmp.setGunshot(doc.getLong("gunshot").intValue());
+
+                                        //place the Google Maps marker and add it to the HashMap
+                                        switch (tmp.getGunshot()) {
+
+                                            //no gunshot detected
+                                            default:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
+                                                break;
+
+                                            //gunshot was recently detected
+                                            case 1:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))));
+                                                break;
+
+                                            //gunshot has been detected
+                                            case 2:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                            //null pointer exception received
+                            catch(Exception nullRef){
+                                Log.w(TAG, "POJO Conversion failed.", nullRef);
+                            }
+                        }
+                        else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+        //retrieve all MARCOs
+        db.collection("MARCOs")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            try {
+                                //Cycle through all documents that were changed and update the map
+                                for (QueryDocumentSnapshot doc : task.getResult()) {
+
+                                    //check to see if the doc is available
+                                    if (doc != null) {
+
+                                        //create the PoloUser that is associated with this account
+                                        Map<String, Double> position = (Map<String, Double>) doc.get("position");
+                                        Marco tmp = new Marco(doc.get("userID", String.class),
+                                                new LatLng(position.get("latitude"), position.get("longitude")),
+                                                doc.getLong("leftMotor").intValue(), doc.getLong("rightMotor").intValue(),
+                                                doc.getLong("o2").intValue(), doc.getLong("mq2").intValue(),
+                                                doc.getLong("mq5").intValue(), doc.getLong("mq7").intValue());
+                                        tmp.setGunshot(doc.getLong("gunshot").intValue());
+
+                                        if (markers.containsKey(doc.getId())) {
+                                            markers.get(doc.getId()).remove();
+                                        }
+
+                                        //place the Google Maps marker and add it to the HashMap
+                                        switch (tmp.getGunshot()) {
+
+                                            //no gunshot detected
+                                            default:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+                                                        .title(tmp.getUserID())
+                                                        .snippet("Oxygen: " + Integer.toString(tmp.getO2()) + " Smoke: " + Integer.toString(tmp.getMq2())
+                                                                + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
+                                                break;
+
+                                            //gunshot was recently detected
+                                            case 1:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
+                                                        .title(tmp.getUserID())
+                                                        .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
+                                                                + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
+                                                break;
+
+                                            //gunshot has been detected
+                                            case 2:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
+                                                        .title(tmp.getUserID())
+                                                        .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
+                                                                + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                            //null pointer exception received
+                            catch(Exception nullRef){
+                                Log.w(TAG, "POJO Conversion failed.", nullRef);
+                            }
+                        }
+                        else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
         //monitor all changes for civilians
         db.collection("Civilians")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -133,13 +343,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
                                             break;
                                     }
-
                                 }
                             }
                         }
                         //null pointer exception received
                         catch(Exception nullRef){
-                            Log.w(TAG, "POJO Conversion failed.", e);
+                            Log.w(TAG, "POJO Conversion failed.", nullRef);
                         }
                     }
                 });
@@ -198,13 +407,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
                                             break;
                                     }
-
                                 }
                             }
                         }
                         //null pointer exception received
                         catch(Exception nullRef){
-                            Log.w(TAG, "POJO Conversion failed.", e);
+                            Log.w(TAG, "POJO Conversion failed.", nullRef);
                         }
                     }
                 });
@@ -274,34 +482,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                             + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
                                             break;
                                     }
-
                                 }
                             }
                         }
                         //null pointer exception received
                         catch(Exception nullRef){
-                            Log.w(TAG, "POJO Conversion failed.", e);
+                            Log.w(TAG, "POJO Conversion failed.", nullRef);
                         }
                     }
                 });
 
-        //setup and display the map
-        mMapView = mView.findViewById(R.id.map);
-        if(mMapView != null){
-            mMapView.onCreate(null);
-            mMapView.onResume();
-            mMapView.getMapAsync(this);
-        }
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        MapsInitializer.initialize(getContext());
-
-        mGoogleMap = googleMap;                                 //initialize the Google map
-        LocationManager locationManager;                        //used for getting user's current location
-        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);     //set the view to satellite map
 
         //check to see if location service is currently permitted
         if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)
