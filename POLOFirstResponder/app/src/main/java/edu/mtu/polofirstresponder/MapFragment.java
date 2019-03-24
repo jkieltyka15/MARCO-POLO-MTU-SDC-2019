@@ -171,7 +171,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     if (doc != null) {
 
                                         //do not display the current user as a marker on the map
-                                        if (!doc.get("userID", String.class).equals(FirebaseAuth.getInstance().getUid())) {
+                                        if (!doc.get("userID", String.class).equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
 
                                             //create the PoloUser that is associated with this account
                                             Map<String, Double> position = (Map<String, Double>) doc.get("position");
@@ -377,7 +377,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                 if (doc != null) {
 
                                     //do not display the current user as a marker on the map
-                                    if (!doc.get("userID", String.class).equals(FirebaseAuth.getInstance().getUid())) {
+                                    if (!doc.get("userID", String.class).equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
 
                                         //create the PoloUser that is associated with this account
                                         Map<String, Double> position = (Map<String, Double>) doc.get("position");

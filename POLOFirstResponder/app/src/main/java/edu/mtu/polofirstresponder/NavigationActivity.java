@@ -31,7 +31,7 @@ import java.util.Map;
 import static android.location.LocationManager.GPS_PROVIDER;
 
 public class NavigationActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LocationListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private PermissionManager permissionManager;            //used for checking permissions
     private FirebaseAuth mAuth;                             //Firebase authenticator
@@ -98,8 +98,44 @@ public class NavigationActivity extends AppCompatActivity
                 && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED) {
 
             //get user's current location
-            LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+
+            //set a listener to always get the updated location
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
+
+                /**
+                 * Update the location of the current user in Firestore
+                 * @param location - The user's current location
+                 */
+                @Override
+                public void onLocationChanged(Location location) {
+
+                    //Update the location for PoloUser
+                    currentUser.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
+                    Map<String, Object> position = new HashMap<>();
+                    position.put("latitude", location.getLatitude());
+                    position.put("longitude", location.getLongitude());
+
+                    //Update the location in the Firestore
+                    FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
+                    db.collection("FirstResponders").document(currentUser.getUserID()).update("position", position);
+
+                }
+                @Override
+                public void onProviderDisabled(String provider) {
+                    // TODO Auto-generated method stub
+                }
+                @Override
+                public void onProviderEnabled(String provider) {
+                    // TODO Auto-generated method stub
+                }
+                @Override
+                public void onStatusChanged(String provider, int status,
+                                            Bundle extras) {
+                    // TODO Auto-generated method stub
+                }
+            });
 
             //create the current PoloUser
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -163,39 +199,5 @@ public class NavigationActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    /**
-     * Update the location of the current user in Firestore
-     * @param location - The user's current location
-     */
-    @Override
-    public void onLocationChanged(Location location) {
-
-        //Update the location for PoloUser
-        currentUser.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
-        Map<String, Object> position = new HashMap<>();
-        position.put("latitude", location.getLatitude());
-        position.put("longitude", location.getLongitude());
-
-        //Update the location in the Firestore
-        FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
-        db.collection("FirstResponders").document(currentUser.getUserID())
-                .update("position", position);
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        Log.d("LOCATION", "Disabled Provider: " + provider);
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-        Log.d("LOCATION", "Enabled provider: " + provider);
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        Log.d("LOCATION", "Status Changed: " + provider + ": status=" + status + " extras=" + extras);
     }
 }
