@@ -114,7 +114,7 @@ public class NavigationActivity extends AppCompatActivity
             //set a listener to always get the updated location
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
 
-                boolean update = true;
+                boolean update = true;  //used as a flag for updating the location to firebase
 
                 /**
                  * Update the location of the current user in Firestore
@@ -137,7 +137,7 @@ public class NavigationActivity extends AppCompatActivity
                         update = false;
 
                         //only update the location every ten seconds
-                        new CountDownTimer(10000, 1000) {
+                        new CountDownTimer(3000, 1000) {
 
                             public void onTick(long millisUntilFinished) {
                                 /* do nothing */
