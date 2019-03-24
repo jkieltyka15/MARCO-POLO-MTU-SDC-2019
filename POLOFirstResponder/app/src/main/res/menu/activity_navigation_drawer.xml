@@ -9,10 +9,6 @@
             android:icon="@drawable/shooter_map"
             android:title="Map" />
         <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Settings" />
-        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/lock"
             android:title="Logout" />

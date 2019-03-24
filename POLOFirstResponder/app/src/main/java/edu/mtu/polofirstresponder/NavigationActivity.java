@@ -119,14 +119,6 @@ public class NavigationActivity extends AppCompatActivity
                     .commit();
         }
 
-        //go to settings fragment
-        else if (id == R.id.nav_settings) {
-            setTitle("Settings");                                                                   //change the title to settings
-            fragmentManager.beginTransaction()                                                      //change view to settings
-                    .replace(R.id.navBackground, new SettingsFragment())
-                    .commit();
-        }
-
         //logout the current user
         else if (id == R.id.nav_logout) {
             setTitle("Log Out");                                                                    //change the title to log out

@@ -2,7 +2,10 @@ package edu.mtu.polofirstresponder;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
@@ -31,6 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.ContentValues.TAG;
+import static android.location.LocationManager.GPS_PROVIDER;
 
 
 /**
@@ -39,8 +45,8 @@ import static android.content.ContentValues.TAG;
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     //map data members
-    private GoogleMap mGoogleMap; //the situation overlook map
-    private Map<String, Marker> markers;    //keep track of google markers
+    private GoogleMap mGoogleMap;               //the situation overlook map
+    private static Map<String, Marker> markers;  //keep track of google markers
 
     //view
     private View mView;
@@ -138,7 +144,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     }
                 });
 
-        //monitor all changes for civilians
+        //monitor all changes for first responders
         db.collection("FirstResponders")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
@@ -203,6 +209,82 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     }
                 });
 
+        //monitor all changes for MARCOs
+        db.collection("MARCOs")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
+
+                        //check the status of the listen
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+                        try {
+                            //Cycle through all documents that were changed and update the map
+                            for (QueryDocumentSnapshot doc : value) {
+
+                                //check to see if the doc is available
+                                if (doc != null) {
+
+                                    //create the PoloUser that is associated with this account
+                                    Map<String, Double> position = (Map<String, Double>) doc.get("position");
+                                    Marco tmp = new Marco(doc.get("userID", String.class),
+                                            new LatLng(position.get("latitude"), position.get("longitude")),
+                                            doc.getLong("leftMotor").intValue(), doc.getLong("rightMotor").intValue(),
+                                            doc.getLong("o2").intValue(), doc.getLong("mq2").intValue(),
+                                            doc.getLong("mq5").intValue(), doc.getLong("mq7").intValue());
+                                    tmp.setGunshot(doc.getLong("gunshot").intValue());
+
+                                    if (markers.containsKey(doc.getId())) {
+                                        markers.get(doc.getId()).remove();
+                                    }
+
+                                    //place the Google Maps marker and add it to the HashMap
+                                    switch (tmp.getGunshot()) {
+
+                                        //no gunshot detected
+                                        default:
+                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                    .position(tmp.getPosition())
+                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+                                                    .title(tmp.getUserID())
+                                                    .snippet("Oxygen: " + Integer.toString(tmp.getO2()) + " Smoke: " + Integer.toString(tmp.getMq2())
+                                                            + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
+                                            break;
+
+                                        //gunshot was recently detected
+                                        case 1:
+                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                    .position(tmp.getPosition())
+                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
+                                                    .title(tmp.getUserID())
+                                                    .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
+                                                            + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
+                                            break;
+
+                                        //gunshot has been detected
+                                        case 2:
+                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                    .position(tmp.getPosition())
+                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
+                                                    .title(tmp.getUserID())
+                                                    .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
+                                                            + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
+                                            break;
+                                    }
+
+                                }
+                            }
+                        }
+                        //null pointer exception received
+                        catch(Exception nullRef){
+                            Log.w(TAG, "POJO Conversion failed.", e);
+                        }
+                    }
+                });
+
         //setup and display the map
         mMapView = mView.findViewById(R.id.map);
         if(mMapView != null){
@@ -214,15 +296,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         MapsInitializer.initialize(getContext());
 
-        mGoogleMap = googleMap;
+        mGoogleMap = googleMap;                                 //initialize the Google map
+        LocationManager locationManager;                        //used for getting user's current location
         googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);     //set the view to satellite map
 
         //check to see if location service is currently permitted
         if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            googleMap.setMyLocationEnabled(true);                                 //show user location
+
+            //show user location
+            googleMap.setMyLocationEnabled(true);
+
+            //set the map to zoom in on the users location
+            locationManager = (LocationManager) this.getContext().getSystemService(Context.LOCATION_SERVICE);
+            Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+            CameraUpdate cameraUpdate = CameraUpdateFactory
+                    .newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17);
+            mGoogleMap.animateCamera(cameraUpdate);
         }
 
         //user has not permitted location, alert user to add location services permission
