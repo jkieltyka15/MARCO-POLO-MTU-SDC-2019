@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -169,36 +170,40 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     //check to see if the doc is available
                                     if (doc != null) {
 
-                                        //create the PoloUser that is associated with this account
-                                        Map<String, Double> position = (Map<String, Double>) doc.get("position");
-                                        PoloUser tmp = new PoloUser(doc.getLong("type").intValue(),
-                                                doc.get("userID", String.class),
-                                                new LatLng(position.get("latitude"), position.get("longitude")));
-                                        tmp.setGunshot(doc.getLong("gunshot").intValue());
+                                        //do not display the current user as a marker on the map
+                                        if (!doc.get("userID", String.class).equals(FirebaseAuth.getInstance().getUid())) {
 
-                                        //place the Google Maps marker and add it to the HashMap
-                                        switch (tmp.getGunshot()) {
+                                            //create the PoloUser that is associated with this account
+                                            Map<String, Double> position = (Map<String, Double>) doc.get("position");
+                                            PoloUser tmp = new PoloUser(doc.getLong("type").intValue(),
+                                                    doc.get("userID", String.class),
+                                                    new LatLng(position.get("latitude"), position.get("longitude")));
+                                            tmp.setGunshot(doc.getLong("gunshot").intValue());
 
-                                            //no gunshot detected
-                                            default:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
-                                                break;
+                                            //place the Google Maps marker and add it to the HashMap
+                                            switch (tmp.getGunshot()) {
 
-                                            //gunshot was recently detected
-                                            case 1:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))));
-                                                break;
+                                                //no gunshot detected
+                                                default:
+                                                    markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                            .position(tmp.getPosition())
+                                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
+                                                    break;
 
-                                            //gunshot has been detected
-                                            case 2:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
-                                                break;
+                                                //gunshot was recently detected
+                                                case 1:
+                                                    markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                            .position(tmp.getPosition())
+                                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))));
+                                                    break;
+
+                                                //gunshot has been detected
+                                                case 2:
+                                                    markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                            .position(tmp.getPosition())
+                                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                                                    break;
+                                            }
                                         }
                                     }
                                 }
@@ -371,40 +376,44 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                 //check to see if the doc is available
                                 if (doc != null) {
 
-                                    //create the PoloUser that is associated with this account
-                                    Map<String, Double> position = (Map<String, Double>) doc.get("position");
-                                    PoloUser tmp = new PoloUser(doc.getLong("type").intValue(),
-                                            doc.get("userID", String.class),
-                                            new LatLng(position.get("latitude"), position.get("longitude")));
-                                    tmp.setGunshot(doc.getLong("gunshot").intValue());
+                                    //do not display the current user as a marker on the map
+                                    if (!doc.get("userID", String.class).equals(FirebaseAuth.getInstance().getUid())) {
 
-                                    if (markers.containsKey(doc.getId())) {
-                                        markers.get(doc.getId()).remove();
-                                    }
+                                        //create the PoloUser that is associated with this account
+                                        Map<String, Double> position = (Map<String, Double>) doc.get("position");
+                                        PoloUser tmp = new PoloUser(doc.getLong("type").intValue(),
+                                                doc.get("userID", String.class),
+                                                new LatLng(position.get("latitude"), position.get("longitude")));
+                                        tmp.setGunshot(doc.getLong("gunshot").intValue());
 
-                                    //place the Google Maps marker and add it to the HashMap
-                                    switch (tmp.getGunshot()) {
+                                        if (markers.containsKey(doc.getId())) {
+                                            markers.get(doc.getId()).remove();
+                                        }
 
-                                        //no gunshot detected
-                                        default:
-                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                    .position(tmp.getPosition())
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
-                                            break;
+                                        //place the Google Maps marker and add it to the HashMap
+                                        switch (tmp.getGunshot()) {
 
-                                        //gunshot was recently detected
-                                        case 1:
-                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                    .position(tmp.getPosition())
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))));
-                                            break;
+                                            //no gunshot detected
+                                            default:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
+                                                break;
 
-                                        //gunshot has been detected
-                                        case 2:
-                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                    .position(tmp.getPosition())
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
-                                            break;
+                                            //gunshot was recently detected
+                                            case 1:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))));
+                                                break;
+
+                                            //gunshot has been detected
+                                            case 2:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                                                break;
+                                        }
                                     }
                                 }
                             }
