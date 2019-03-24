@@ -273,7 +273,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                                 + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
                                                 break;
 
-                                            //gunshot was recently detected
+                                            //gunshot was detected 5 minutes ago
                                             case 1:
                                                 markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                         .position(tmp.getPosition())
@@ -283,7 +283,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                                 + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
                                                 break;
 
-                                            //gunshot has been detected
+                                            //gunshot was detected 1 minute ago
                                             case 2:
                                                 markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                         .position(tmp.getPosition())
@@ -291,6 +291,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                         .title(tmp.getUserID())
                                                         .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
                                                                 + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
+                                                break;
+
+                                                //gunshot has been detected
+                                            case 3:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
                                                 break;
                                         }
                                     }
@@ -498,7 +505,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                             + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
                                             break;
 
-                                        //gunshot was recently detected
+                                        //gunshot was detected 5 minutes ago
                                         case 1:
                                             markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                     .position(tmp.getPosition())
@@ -508,7 +515,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                             + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
                                             break;
 
-                                        //gunshot has been detected
+                                        //gunshot was detected 1 minute ago
                                         case 2:
                                             markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                     .position(tmp.getPosition())
@@ -516,6 +523,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                     .title(tmp.getUserID())
                                                     .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
                                                             + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
+                                            break;
+
+                                        //gunshot has been detected
+                                        case 3:
+                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                    .position(tmp.getPosition())
+                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
                                             break;
                                     }
                                 }

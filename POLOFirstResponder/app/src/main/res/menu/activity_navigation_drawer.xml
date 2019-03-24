@@ -9,6 +9,10 @@
             android:icon="@drawable/shooter_map"
             android:title="Map" />
         <item
+            android:id="@+id/nav_mapkey"
+            android:icon="@drawable/key"
+            android:title="Map Key" />
+        <item
             android:id="@+id/nav_gunshot"
             android:icon="@drawable/simulate_gunshot"
             android:title="Simulate Gunshot" />

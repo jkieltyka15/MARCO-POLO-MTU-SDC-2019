@@ -11,11 +11,12 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -136,7 +137,7 @@ public class NavigationActivity extends AppCompatActivity
 
                         update = false;
 
-                        //only update the location every ten seconds
+                        //only update the location every 3 seconds
                         new CountDownTimer(3000, 1000) {
 
                             public void onTick(long millisUntilFinished) {
@@ -245,6 +246,14 @@ public class NavigationActivity extends AppCompatActivity
             setTitle("Map");                                                                        //change the title to map
             fragmentManager.beginTransaction()                                                      //change view to map
                     .replace(R.id.navBackground, new MapFragment())
+                    .commit();
+        }
+
+        //go to the map key fragment
+        else if(id == R.id.nav_mapkey){
+            setTitle("Map Key");                                                                    //change the title to map key
+            fragmentManager.beginTransaction()                                                      //change view to map key
+                    .replace(R.id.navBackground, new MapKeyFragment())
                     .commit();
         }
 
