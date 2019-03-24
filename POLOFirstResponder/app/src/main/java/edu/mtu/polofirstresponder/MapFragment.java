@@ -128,15 +128,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
                                                 break;
 
-                                            //gunshot was recently detected
+                                            //gunshot was detected five minutes ago
                                             case 1:
                                                 markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                         .position(tmp.getPosition())
                                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))));
                                                 break;
 
-                                            //gunshot has been detected
+                                            //gunshot was detected 1 minute ago
                                             case 2:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
+                                                break;
+
+                                            //gunshot has been detected
+                                            case 3:
                                                 markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                         .position(tmp.getPosition())
                                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
@@ -190,15 +197,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
                                                     break;
 
-                                                //gunshot was recently detected
+                                                //gunshot was detected 5 minutes ago
                                                 case 1:
                                                     markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                             .position(tmp.getPosition())
                                                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))));
                                                     break;
 
-                                                //gunshot has been detected
+                                                //gunshot was detected 1 minute ago
                                                 case 2:
+                                                    markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                            .position(tmp.getPosition())
+                                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
+                                                    break;
+
+                                                //gunshot has been detected
+                                                case 3:
                                                     markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                             .position(tmp.getPosition())
                                                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
@@ -333,15 +347,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
                                             break;
 
-                                        //gunshot was recently detected
+                                        //gunshot was detected five minutes ago
                                         case 1:
                                             markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                     .position(tmp.getPosition())
                                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))));
                                             break;
 
-                                        //gunshot has been detected
+                                        //gunshot was detected 1 minute ago
                                         case 2:
+                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                    .position(tmp.getPosition())
+                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
+                                            break;
+
+                                        //gunshot has been detected
+                                        case 3:
                                             markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                     .position(tmp.getPosition())
                                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
@@ -400,15 +421,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
                                                 break;
 
-                                            //gunshot was recently detected
+                                            //gunshot was detected 5 minutes ago
                                             case 1:
                                                 markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                         .position(tmp.getPosition())
                                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))));
                                                 break;
 
-                                            //gunshot has been detected
+                                            //gunshot was detected 1 minute ago
                                             case 2:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(tmp.getPosition())
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
+                                                break;
+
+                                            //gunshot has been detected
+                                            case 3:
                                                 markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                         .position(tmp.getPosition())
                                                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
