@@ -31,7 +31,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -92,7 +91,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);     //set the view to satellite map
 
         //initialize the map marker arraylist
-        markers = new HashMap<String, Marker>();
+        markers = new HashMap<>();
 
         //initialize the Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();

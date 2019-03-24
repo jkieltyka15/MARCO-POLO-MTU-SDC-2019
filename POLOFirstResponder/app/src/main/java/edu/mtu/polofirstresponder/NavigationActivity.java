@@ -22,7 +22,6 @@ public class NavigationActivity extends AppCompatActivity
 
     private PermissionManager permissionManager;            //used for checking permissions
     private FirebaseAuth mAuth;                             //Firebase authenticator
-    private FirebaseAuth.AuthStateListener mAuthListener;   //Firebase authentication state listener
     private static final String TAG = "Navigation";         //tag for logfile
 
     @Override
@@ -52,7 +51,7 @@ public class NavigationActivity extends AppCompatActivity
 
         //Initialize Firebase and check to see the user's status
         mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
+        new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
