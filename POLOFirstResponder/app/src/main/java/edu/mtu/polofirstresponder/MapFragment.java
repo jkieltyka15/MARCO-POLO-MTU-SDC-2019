@@ -293,11 +293,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                                 + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
                                                 break;
 
-                                                //gunshot has been detected
+                                            //gunshot has been detected
                                             case 3:
                                                 markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                         .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                                                        .title(tmp.getUserID())
+                                                        .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
+                                                                + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
                                                 break;
                                         }
                                     }
@@ -488,8 +491,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                             doc.getLong("mq5").intValue(), doc.getLong("mq7").intValue());
                                     tmp.setGunshot(doc.getLong("gunshot").intValue());
 
+                                    //check to see if the info for MARCO was previously shown
+                                    boolean isInfoWindowShown = false;
                                     if (markers.containsKey(doc.getId())) {
-                                        markers.get(doc.getId()).remove();
+                                        isInfoWindowShown = markers.get(doc.getId()).isInfoWindowShown();   //check to see if MARCO info was being displayed
+                                        markers.get(doc.getId()).remove();                                  //remove the marker from the map
                                     }
 
                                     //place the Google Maps marker and add it to the HashMap
@@ -529,8 +535,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                         case 3:
                                             markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                     .position(tmp.getPosition())
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                                                    .title(tmp.getUserID())
+                                                    .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
+                                                            + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
                                             break;
+                                    }
+
+                                    //display MARCOs info if it was shown on the previous version of the marker
+                                    if(isInfoWindowShown){
+                                        markers.get(doc.getId()).showInfoWindow();
                                     }
                                 }
                             }
