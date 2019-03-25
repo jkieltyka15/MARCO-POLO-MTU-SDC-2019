@@ -55,7 +55,7 @@ public class AudioProcessor implements Runnable {
 
         //using the polouser class to set an ID and type for the phone
         //we have duplicates of the position and are spending a lot of time getting them in the correct data type
-        PoloUser polouser = new PoloUser(0,FirebaseAuth.getInstance().getCurrentUser().getUid(),latlng);
+        PoloUser polouser = new PoloUser(0,"Anonymous",latlng);
         //results from GS processor return boolean, we want to add a 3 option based on the timestamp
         //for now we will use this statement to deal with the boolean
         if (!is_gunshot) {
@@ -71,7 +71,7 @@ public class AudioProcessor implements Runnable {
             userResult.put("ID", polouser.userID);
             userResult.put("Gunshot Value", polouser.gunshot);
 
-            db.collection("Civilians").document("Gunshot Analysis Results")
+            db.collection("Civilians").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .set(polouser)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override

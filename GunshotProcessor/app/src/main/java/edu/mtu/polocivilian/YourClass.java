@@ -69,7 +69,7 @@ public class YourClass {
                     //900 limit is 28,000,000
                     //350 limit is 12,000,000
                     //700 limit is 23,000,000
-                    if (audioFFT[j].abs() > 23000000) {
+                    if (audioFFT[j].abs() > 12000000) {
                         gunshot = true;
                         return gunshot;
                     }
