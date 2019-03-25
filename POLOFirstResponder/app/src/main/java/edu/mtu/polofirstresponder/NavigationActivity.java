@@ -281,6 +281,11 @@ public class NavigationActivity extends AppCompatActivity
         //logout the current user
         else if (id == R.id.nav_logout) {
             setTitle("Log Out");                                                                    //change the title to log out
+
+            //Remove the user from the Firestore
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("FirstResponders").document(currentUser.getUserID()).delete();
+
             mAuth.signOut();                                                                        //sign out the Firebase user
             startActivity(new Intent(NavigationActivity.this, LoginActivity.class));   //start the login activity
             this.finish();                                                                          //end the current activity
