@@ -66,7 +66,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState){
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
 
@@ -75,7 +75,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         //setup and display the map
         mMapView = mView.findViewById(R.id.map);
-        if(mMapView != null){
+        if (mMapView != null) {
             mMapView.onCreate(null);
             mMapView.onResume();
             mMapView.getMapAsync(this);
@@ -104,9 +104,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            try {
-                                //Cycle through all documents that were changed and update the map
-                                for (QueryDocumentSnapshot doc : task.getResult()) {
+
+                            //Cycle through all documents that were changed and update the map
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+                                try {
 
                                     //check to see if the doc is available
                                     if (doc != null) {
@@ -117,13 +118,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
                                     }
                                 }
+                                //null pointer exception received
+                                catch (Exception nullRef) {
+                                    Log.w(TAG, "POJO Conversion failed.", nullRef);
+                                }
                             }
-                            //null pointer exception received
-                            catch(Exception nullRef){
-                                Log.w(TAG, "POJO Conversion failed.", nullRef);
-                            }
-                        }
-                        else {
+
+                        } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
@@ -136,28 +137,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            try {
-                                //Cycle through all documents that were changed and update the map
-                                for (QueryDocumentSnapshot doc : task.getResult()) {
+
+                            //Cycle through all documents that were changed and update the map
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+                                try {
 
                                     //check to see if the doc is available
                                     if (doc != null) {
 
                                         //only add the marker if it is not the current user
-                                        if(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(doc.getId())) {
+                                        if (!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(doc.getId())) {
                                             markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                     .position(new LatLng(doc.getDouble("latitude"), doc.getDouble("longitude")))
                                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
                                         }
                                     }
                                 }
+                                //null pointer exception received
+                                catch (Exception nullRef) {
+                                    Log.w(TAG, "POJO Conversion failed.", nullRef);
+                                }
                             }
-                            //null pointer exception received
-                            catch(Exception nullRef){
-                                Log.w(TAG, "POJO Conversion failed.", nullRef);
-                            }
-                        }
-                        else {
+
+                        } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
@@ -170,9 +172,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            try {
-                                //Cycle through all documents that were changed and update the map
-                                for (QueryDocumentSnapshot doc : task.getResult()) {
+
+                            //Cycle through all documents that were changed and update the map
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+                                try {
 
                                     //check to see if the doc is available
                                     if (doc != null) {
@@ -193,16 +196,72 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                 .snippet("Oxygen: " + Integer.toString(doc.getLong("o2").intValue())
                                                         + " Smoke: " + Integer.toString(doc.getLong("mq2").intValue())
                                                         + " Gas: " + Integer.toString(doc.getLong("mq5").intValue())
-                                                        +  " C0: " + Integer.toString(doc.getLong("mq7").intValue()))));
+                                                        + " C0: " + Integer.toString(doc.getLong("mq7").intValue()))));
+                                    }
+                                }
+                                //null pointer exception received
+                                catch (Exception nullRef) {
+                                    Log.w(TAG, "POJO Conversion failed.", nullRef);
+                                }
+                            }
+
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+        //retrieve all Gunshots
+        db.collection("Gunshots")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+
+                            //Cycle through all documents that were changed and update the map
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+
+                                //check to see if the doc is available
+                                if (doc != null) {
+                                    try {
+
+                                        //get the position of the MARCO device
+                                        Map<String, Double> position = (Map<String, Double>) doc.get("position");
+
+                                        //place the marker on the map
+                                        switch (doc.getLong("threatLvl").intValue()) {
+
+                                            //Gunshot detected over 5 minutes ago
+                                            default:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(new LatLng(position.get("latitude"), position.get("longitude")))
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))));
+                                                break;
+
+                                            //Gunshot detected 1 to 5 minutes ago
+                                            case 1:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(new LatLng(position.get("latitude"), position.get("longitude")))
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
+                                                break;
+
+                                            //Gunshot detected 0 to 1 minute ago
+                                            case 2:
+                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                        .position(new LatLng(position.get("latitude"), position.get("longitude")))
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                                                break;
+                                        }
+                                    }
+                                    //null pointer exception received
+                                    catch (Exception nullRef) {
+                                        Log.w(TAG, "POJO Conversion failed.", nullRef);
                                     }
                                 }
                             }
-                            //null pointer exception received
-                            catch(Exception nullRef){
-                                Log.w(TAG, "POJO Conversion failed.", nullRef);
-                            }
-                        }
-                        else {
+
+                        } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
@@ -220,9 +279,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             Log.w(TAG, "Listen failed.", e);
                             return;
                         }
-                        try {
-                            //Cycle through all documents that were changed and update the map
-                            for (QueryDocumentSnapshot doc : value) {
+
+                        //Cycle through all documents that were changed and update the map
+                        for (QueryDocumentSnapshot doc : value) {
+                            try {
 
                                 //check to see if the doc is available
                                 //check to see if the doc is available
@@ -234,11 +294,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     break;
                                 }
                             }
+                            //null pointer exception received
+                            catch (Exception nullRef) {
+                                Log.w(TAG, "POJO Conversion failed.", nullRef);
+                            }
                         }
-                        //null pointer exception received
-                        catch(Exception nullRef){
-                            Log.w(TAG, "POJO Conversion failed.", nullRef);
-                        }
+
                     }
                 });
 
@@ -254,26 +315,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             Log.w(TAG, "Listen failed.", e);
                             return;
                         }
-                        try {
-                            //Cycle through all documents that were changed and update the map
-                            for (QueryDocumentSnapshot doc : value) {
 
-                                //check to see if the doc is available
-                                if (doc != null) {
+                        //Cycle through all documents that were changed and update the map
+                        for (QueryDocumentSnapshot doc : value) {
+
+                            //check to see if the doc is available
+                            if (doc != null) {
+                                try {
 
                                     //only add the marker if it is not the current user
-                                    if(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(doc.getId())) {
+                                    if (!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(doc.getId())) {
                                         markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                 .position(new LatLng(doc.getDouble("latitude"), doc.getDouble("longitude")))
                                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
                                     }
                                 }
+                                //null pointer exception received
+                                catch (Exception nullRef) {
+                                    Log.w(TAG, "POJO Conversion failed.", nullRef);
+                                }
                             }
                         }
-                        //null pointer exception received
-                        catch(Exception nullRef){
-                            Log.w(TAG, "POJO Conversion failed.", nullRef);
-                        }
+
                     }
                 });
 
@@ -289,12 +352,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             Log.w(TAG, "Listen failed.", e);
                             return;
                         }
-                        try {
-                            //Cycle through all documents that were changed and update the map
-                            for (QueryDocumentSnapshot doc : value) {
 
-                                //check to see if the doc is available
-                                if (doc != null) {
+                        //Cycle through all documents that were changed and update the map
+                        for (QueryDocumentSnapshot doc : value) {
+
+                            //check to see if the doc is available
+                            if (doc != null) {
+                                try {
 
                                     //create the PoloUser that is associated with this account
                                     Map<String, Double> position = (Map<String, Double>) doc.get("position");
@@ -314,25 +378,83 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                             .snippet("Oxygen: " + Integer.toString(doc.getLong("o2").intValue())
                                                     + " Smoke: " + Integer.toString(doc.getLong("mq2").intValue())
                                                     + " Gas: " + Integer.toString(doc.getLong("mq5").intValue())
-                                                    +  " C0: " + Integer.toString(doc.getLong("mq7").intValue()))));
+                                                    + " C0: " + Integer.toString(doc.getLong("mq7").intValue()))));
 
                                     //display MARCOs info if it was shown on the previous version of the marker
-                                    if(isInfoWindowShown){
+                                    if (isInfoWindowShown) {
                                         markers.get(doc.getId()).showInfoWindow();
                                     }
+
+                                }
+                                //null pointer exception received
+                                catch (Exception nullRef) {
+                                    Log.w(TAG, "POJO Conversion failed.", nullRef);
                                 }
                             }
                         }
-                        //null pointer exception received
-                        catch(Exception nullRef){
-                            Log.w(TAG, "POJO Conversion failed.", nullRef);
+                    }
+                });
+
+        //monitor all changes for Gunshots
+        db.collection("Gunshots")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
+
+                        //check the status of the listen
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
                         }
+
+                        //Cycle through all documents that were changed and update the map
+                        for (QueryDocumentSnapshot doc : value) {
+
+                            //check to see if the doc is available
+                            if (doc != null) {
+                                try {
+                                    //get the position of the MARCO device
+                                    Map<String, Double> position = (Map<String, Double>) doc.get("position");
+
+                                    //place the marker on the map
+                                    switch (doc.getLong("threatLvl").intValue()) {
+
+                                        //Gunshot detected over 5 minutes ago
+                                        default:
+                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                    .position(new LatLng(position.get("latitude"), position.get("longitude")))
+                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))));
+                                            break;
+
+                                        //Gunshot detected 1 to 5 minutes ago
+                                        case 1:
+                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                    .position(new LatLng(position.get("latitude"), position.get("longitude")))
+                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
+                                            break;
+
+                                        //Gunshot detected 0 to 1 minute ago
+                                        case 2:
+                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                    .position(new LatLng(position.get("latitude"), position.get("longitude")))
+                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                                            break;
+                                    }
+                                }
+                                //null pointer exception received
+                                catch (Exception nullRef) {
+                                    Log.w(TAG, "POJO Conversion failed.", nullRef);
+                                }
+                            }
+                        }
+
                     }
                 });
 
 
         //check to see if location service is currently permitted
-        if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                 && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
 
             //show user location
@@ -352,8 +474,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private boolean checkPermission(String permission)
-    {
+    private boolean checkPermission(String permission) {
         int res = getContext().checkCallingOrSelfPermission(permission);
         return (res == PackageManager.PERMISSION_GRANTED);
     }
