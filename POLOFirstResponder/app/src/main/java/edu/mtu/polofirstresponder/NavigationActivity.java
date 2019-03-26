@@ -108,8 +108,6 @@ public class NavigationActivity extends AppCompatActivity
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
 
-
-
             //set a listener to always get the updated location
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
 
@@ -224,16 +222,24 @@ public class NavigationActivity extends AppCompatActivity
         //simulate a gunshot event
         else if(id == R.id.nav_gunshot){
 
-            //Update the gunshot status to shot detected in the Firestore
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            // TODO: Create a new Gunshot on the Firstore
+            //check to see if location service is currently permitted
+            if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
+                    && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED) {
+
+                //get user's current location which is the gunshot location
+                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+
+                //Update the gunshot status to shot detected in the Firestore
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("Gunshots").document().set(new Gunshot(new LatLng(location.getLatitude(), location.getLongitude())));
+            }
 
             //display toast notification that gunshot has been detected
             Context appContext = getApplicationContext();
             Toast gsMessage = Toast.makeText(appContext, "Gunshot Detected", Toast. LENGTH_SHORT);
             gsMessage.setGravity(Gravity.TOP, 0, 0);
             gsMessage.show();
-
         }
 
         //logout the current user

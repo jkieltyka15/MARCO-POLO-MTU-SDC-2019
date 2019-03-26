@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class Marco  {
 
     //position
-    LatLng position;    //MARCO's current position
+    private LatLng position;    //MARCO's current position
 
     //motors
     private int leftMotor;      //holds speed of devices left motor
