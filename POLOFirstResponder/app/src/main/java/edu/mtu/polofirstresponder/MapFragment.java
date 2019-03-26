@@ -113,42 +113,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                                         //create the PoloUser that is associated with this account
                                         Map<String, Double> position = (Map<String, Double>) doc.get("position");
-                                        PoloUser tmp = new PoloUser(doc.getLong("type").intValue(),
-                                                doc.get("userID", String.class),
-                                                new LatLng(position.get("latitude"), position.get("longitude")));
-                                        tmp.setGunshot(doc.getLong("gunshot").intValue());
 
-                                        //place the Google Maps marker and add it to the HashMap
-                                        switch (tmp.getGunshot()) {
-
-                                            //no gunshot detected
-                                            default:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
-                                                break;
-
-                                            //gunshot was detected five minutes ago
-                                            case 1:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))));
-                                                break;
-
-                                            //gunshot was detected 1 minute ago
-                                            case 2:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
-                                                break;
-
-                                            //gunshot has been detected
-                                            case 3:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
-                                                break;
-                                        }
+                                        //pace the new marker on the map
+                                        markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                .position(new LatLng(position.get("latitude"), position.get("longitude")))
+                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
                                     }
                                 }
                             }
@@ -177,48 +146,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     //check to see if the doc is available
                                     if (doc != null) {
 
-                                        //do not display the current user as a marker on the map
-                                        if (!doc.get("userID", String.class).equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                        //create the PoloUser that is associated with this account
+                                        Map<String, Double> position = (Map<String, Double>) doc.get("position");
 
-                                            //create the PoloUser that is associated with this account
-                                            Map<String, Double> position = (Map<String, Double>) doc.get("position");
-                                            PoloUser tmp = new PoloUser(doc.getLong("type").intValue(),
-                                                    doc.get("userID", String.class),
-                                                    new LatLng(position.get("latitude"), position.get("longitude")));
-                                            tmp.setGunshot(doc.getLong("gunshot").intValue());
-
-                                            //place the Google Maps marker and add it to the HashMap
-                                            switch (tmp.getGunshot()) {
-
-                                                //no gunshot detected
-                                                default:
-                                                    markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                            .position(tmp.getPosition())
-                                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
-                                                    break;
-
-                                                //gunshot was detected 5 minutes ago
-                                                case 1:
-                                                    markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                            .position(tmp.getPosition())
-                                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))));
-                                                    break;
-
-                                                //gunshot was detected 1 minute ago
-                                                case 2:
-                                                    markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                            .position(tmp.getPosition())
-                                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
-                                                    break;
-
-                                                //gunshot has been detected
-                                                case 3:
-                                                    markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                            .position(tmp.getPosition())
-                                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
-                                                    break;
-                                            }
-                                        }
+                                        //place the new marker on the map
+                                        markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                .position(new LatLng(position.get("latitude"), position.get("longitude")))
+                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
                                     }
                                 }
                             }
@@ -247,62 +181,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     //check to see if the doc is available
                                     if (doc != null) {
 
-                                        //create the PoloUser that is associated with this account
+                                        //get the position of the MARCO device
                                         Map<String, Double> position = (Map<String, Double>) doc.get("position");
-                                        Marco tmp = new Marco(doc.get("userID", String.class),
-                                                new LatLng(position.get("latitude"), position.get("longitude")),
-                                                doc.getLong("leftMotor").intValue(), doc.getLong("rightMotor").intValue(),
-                                                doc.getLong("o2").intValue(), doc.getLong("mq2").intValue(),
-                                                doc.getLong("mq5").intValue(), doc.getLong("mq7").intValue());
-                                        tmp.setGunshot(doc.getLong("gunshot").intValue());
 
+                                        //check to see if the marker has already been displayed
                                         if (markers.containsKey(doc.getId())) {
                                             markers.get(doc.getId()).remove();
                                         }
 
-                                        //place the Google Maps marker and add it to the HashMap
-                                        switch (tmp.getGunshot()) {
-
-                                            //no gunshot detected
-                                            default:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
-                                                        .title(tmp.getUserID())
-                                                        .snippet("Oxygen: " + Integer.toString(tmp.getO2()) + " Smoke: " + Integer.toString(tmp.getMq2())
-                                                                + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
-                                                break;
-
-                                            //gunshot was detected 5 minutes ago
-                                            case 1:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
-                                                        .title(tmp.getUserID())
-                                                        .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
-                                                                + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
-                                                break;
-
-                                            //gunshot was detected 1 minute ago
-                                            case 2:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
-                                                        .title(tmp.getUserID())
-                                                        .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
-                                                                + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
-                                                break;
-
-                                            //gunshot has been detected
-                                            case 3:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                                                        .title(tmp.getUserID())
-                                                        .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
-                                                                + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
-                                                break;
-                                        }
+                                        //place the marker on the map
+                                        markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                                .position(new LatLng(position.get("latitude"), position.get("longitude")))
+                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+                                                .title("MARCO")
+                                                .snippet("Oxygen: " + Integer.toString(doc.getLong("o2").intValue())
+                                                        + " Smoke: " + Integer.toString(doc.getLong("mq2").intValue())
+                                                        + " Gas: " + Integer.toString(doc.getLong("mq5").intValue())
+                                                        +  " C0: " + Integer.toString(doc.getLong("mq7").intValue()))));
                                     }
                                 }
                             }
@@ -334,50 +229,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             for (QueryDocumentSnapshot doc : value) {
 
                                 //check to see if the doc is available
+                                //check to see if the doc is available
                                 if (doc != null) {
 
                                     //create the PoloUser that is associated with this account
                                     Map<String, Double> position = (Map<String, Double>) doc.get("position");
-                                    PoloUser tmp = new PoloUser(doc.getLong("type").intValue(),
-                                            doc.get("userID", String.class),
-                                            new LatLng(position.get("latitude"), position.get("longitude")));
-                                    tmp.setGunshot(doc.getLong("gunshot").intValue());
 
-                                    if (markers.containsKey(doc.getId())) {
-                                        markers.get(doc.getId()).remove();
-                                    }
-
-                                    //place the Google Maps marker and add it to the HashMap
-                                    switch (tmp.getGunshot()) {
-
-                                        //no gunshot detected
-                                        default:
-                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                    .position(tmp.getPosition())
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
-                                            break;
-
-                                        //gunshot was detected five minutes ago
-                                        case 1:
-                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                    .position(tmp.getPosition())
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))));
-                                            break;
-
-                                        //gunshot was detected 1 minute ago
-                                        case 2:
-                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                    .position(tmp.getPosition())
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
-                                            break;
-
-                                        //gunshot has been detected
-                                        case 3:
-                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                    .position(tmp.getPosition())
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
-                                            break;
-                                    }
+                                    markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(position.get("latitude"), position.get("longitude")))
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
+                                    break;
                                 }
                             }
                         }
@@ -407,52 +268,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                 //check to see if the doc is available
                                 if (doc != null) {
 
-                                    //do not display the current user as a marker on the map
-                                    if (!doc.get("userID", String.class).equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                    //create the PoloUser that is associated with this account
+                                    Map<String, Double> position = (Map<String, Double>) doc.get("position");
 
-                                        //create the PoloUser that is associated with this account
-                                        Map<String, Double> position = (Map<String, Double>) doc.get("position");
-                                        PoloUser tmp = new PoloUser(doc.getLong("type").intValue(),
-                                                doc.get("userID", String.class),
-                                                new LatLng(position.get("latitude"), position.get("longitude")));
-                                        tmp.setGunshot(doc.getLong("gunshot").intValue());
-
-                                        if (markers.containsKey(doc.getId())) {
-                                            markers.get(doc.getId()).remove();
-                                        }
-
-                                        //place the Google Maps marker and add it to the HashMap
-                                        switch (tmp.getGunshot()) {
-
-                                            //no gunshot detected
-                                            default:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
-                                                break;
-
-                                            //gunshot was detected 5 minutes ago
-                                            case 1:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))));
-                                                break;
-
-                                            //gunshot was detected 1 minute ago
-                                            case 2:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
-                                                break;
-
-                                            //gunshot has been detected
-                                            case 3:
-                                                markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                        .position(tmp.getPosition())
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
-                                                break;
-                                        }
-                                    }
+                                    markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(position.get("latitude"), position.get("longitude")))
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
+                                    break;
                                 }
                             }
                         }
@@ -484,12 +306,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                                     //create the PoloUser that is associated with this account
                                     Map<String, Double> position = (Map<String, Double>) doc.get("position");
-                                    Marco tmp = new Marco(doc.get("userID", String.class),
-                                            new LatLng(position.get("latitude"), position.get("longitude")),
-                                            doc.getLong("leftMotor").intValue(), doc.getLong("rightMotor").intValue(),
-                                            doc.getLong("o2").intValue(), doc.getLong("mq2").intValue(),
-                                            doc.getLong("mq5").intValue(), doc.getLong("mq7").intValue());
-                                    tmp.setGunshot(doc.getLong("gunshot").intValue());
 
                                     //check to see if the info for MARCO was previously shown
                                     boolean isInfoWindowShown = false;
@@ -498,49 +314,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                         markers.get(doc.getId()).remove();                                  //remove the marker from the map
                                     }
 
-                                    //place the Google Maps marker and add it to the HashMap
-                                    switch (tmp.getGunshot()) {
-
-                                        //no gunshot detected
-                                        default:
-                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                    .position(tmp.getPosition())
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
-                                                    .title(tmp.getUserID())
-                                                    .snippet("Oxygen: " + Integer.toString(tmp.getO2()) + " Smoke: " + Integer.toString(tmp.getMq2())
-                                                            + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
-                                            break;
-
-                                        //gunshot was detected 5 minutes ago
-                                        case 1:
-                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                    .position(tmp.getPosition())
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
-                                                    .title(tmp.getUserID())
-                                                    .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
-                                                            + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
-                                            break;
-
-                                        //gunshot was detected 1 minute ago
-                                        case 2:
-                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                    .position(tmp.getPosition())
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
-                                                    .title(tmp.getUserID())
-                                                    .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
-                                                            + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
-                                            break;
-
-                                        //gunshot has been detected
-                                        case 3:
-                                            markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
-                                                    .position(tmp.getPosition())
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                                                    .title(tmp.getUserID())
-                                                    .snippet("Oxygen: " + Integer.toString(tmp.getO2()) +  " Smoke: " + Integer.toString(tmp.getMq2())
-                                                            + " Gas: " + Integer.toString(tmp.getMq5()) +  " C0: " + Integer.toString(tmp.getMq7()))));
-                                            break;
-                                    }
+                                    //place the marker on the map
+                                    markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(position.get("latitude"), position.get("longitude")))
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+                                            .title("MARCO")
+                                            .snippet("Oxygen: " + Integer.toString(doc.getLong("o2").intValue())
+                                                    + " Smoke: " + Integer.toString(doc.getLong("mq2").intValue())
+                                                    + " Gas: " + Integer.toString(doc.getLong("mq5").intValue())
+                                                    +  " C0: " + Integer.toString(doc.getLong("mq7").intValue()))));
 
                                     //display MARCOs info if it was shown on the previous version of the marker
                                     if(isInfoWindowShown){

@@ -41,8 +41,6 @@ public class NavigationActivity extends AppCompatActivity
     private FirebaseAuth mAuth;                             //Firebase authenticator
     private static final String TAG = "Navigation";         //tag for logfile
 
-    private PoloUser currentUser;               //current Firebase user
-
     //timers
     CountDownTimer oneMinute;       //countdown timer for one minute
     CountDownTimer fiveMinutes;     //countdown timer for five minutes
@@ -125,15 +123,15 @@ public class NavigationActivity extends AppCompatActivity
                 public void onLocationChanged(Location location) {
 
                     if(update) {
+
                         //Update the location for PoloUser
-                        currentUser.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
                         Map<String, Object> position = new HashMap<>();
                         position.put("latitude", location.getLatitude());
                         position.put("longitude", location.getLongitude());
 
                         //Update the location in the Firestore
                         FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
-                        db.collection("FirstResponders").document(currentUser.getUserID()).update("position", position);
+                        db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).update("position", position);
 
                         update = false;
 
@@ -166,46 +164,14 @@ public class NavigationActivity extends AppCompatActivity
                 }
             });
 
-            //create the current PoloUser
-            FirebaseAuth mAuth = FirebaseAuth.getInstance();
-            currentUser = new PoloUser(PoloUser.FIRST_RESPONDER, mAuth.getCurrentUser().getUid(),
-                    new LatLng(location.getLatitude(), location.getLongitude()));
+            //Update the location for PoloUser
+            Map<String, Object> position = new HashMap<>();
+            position.put("latitude", location.getLatitude());
+            position.put("longitude", location.getLongitude());
 
-            //write to the Firestore
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("FirstResponders").document(currentUser.getUserID()).set(currentUser);
-
-            //Update gunshot status to gunshot heard 1 minute ago in Firestore
-            oneMinute = new CountDownTimer(60000, 1000) {
-
-                public void onTick(long millisUntilFinished) {
-                    /* do nothing */
-                }
-
-                public void onFinish() {
-
-                    //Update the gunshot status to shot detected in the Firestore
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    currentUser.setGunshot(2);
-                    db.collection("FirstResponders").document(currentUser.getUserID()).update("gunshot", currentUser.getGunshot());
-                }
-            };
-
-            //Update gunshot status to gunshot heard 5 minutes ago in Firestore
-            fiveMinutes = new CountDownTimer(300000, 1000) {
-
-                public void onTick(long millisUntilFinished) {
-                    /* do nothing */
-                }
-
-                public void onFinish() {
-
-                    //Update the gunshot status to shot detected in the Firestore
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    currentUser.setGunshot(1);
-                    db.collection("FirstResponders").document(currentUser.getUserID()).update("gunshot", currentUser.getGunshot());
-                }
-            };
+            //Update the location in the Firestore
+            FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
+            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).update("position", position);
         }
     }
 
@@ -262,8 +228,7 @@ public class NavigationActivity extends AppCompatActivity
 
             //Update the gunshot status to shot detected in the Firestore
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            currentUser.setGunshot(3);
-            db.collection("FirstResponders").document(currentUser.getUserID()).update("gunshot", currentUser.getGunshot());
+            // TODO: Create a new Gunshot on the Firstore
 
             //display toast notification that gunshot has been detected
             Context appContext = getApplicationContext();
@@ -271,11 +236,6 @@ public class NavigationActivity extends AppCompatActivity
             gsMessage.setGravity(Gravity.TOP, 0, 0);
             gsMessage.show();
 
-            //reset the timers
-            oneMinute.cancel();     //stop the one minute timer
-            fiveMinutes.cancel();   //stop the five minute timer
-            oneMinute.start();      //restart the one minute timer
-            fiveMinutes.start();    //restart the five minute timer
         }
 
         //logout the current user
@@ -284,7 +244,7 @@ public class NavigationActivity extends AppCompatActivity
 
             //Remove the user from the Firestore
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("FirstResponders").document(currentUser.getUserID()).delete();
+            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).delete();
 
             mAuth.signOut();                                                                        //sign out the Firebase user
             startActivity(new Intent(NavigationActivity.this, LoginActivity.class));   //start the login activity
