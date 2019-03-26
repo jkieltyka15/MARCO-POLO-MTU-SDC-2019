@@ -1,11 +1,27 @@
 const functions = require('firebase-functions');
 
-// Listen for changes in all documents in the 'users' collection
-exports.useWildcard = functions.firestore
-    .document('Gunshots/{docId}')
+//Change the threat level status to 0
+function threatLevel0(change){
+   return change.ref.set({
+         threatLvl: 0
+       }, {merge: true});
+}
+
+//Change the threat level status to 1
+function threatLevel1(change){
+   return change.ref.set({
+         threatLvl: 1
+       }, {merge: true});
+}
+
+// Listen for creation documents in the 'Gunshots' collection
+exports.startGunshotTimers = functions.firestore
+    .document('Gunshots/{docID}')
     .onCreate((change, context) => {
-      // If we set `/users/marie` to {name: "Marie"} then
-      // context.params.userId == "marie"
-      // ... and ...
-      // change.after.data() == {name: "Marie"}
+
+      //change the threat level to 1 after 1 minute
+      setTimeout(threatLevel1, 60000, change);           
+      
+      //change the threat level to 0 after 5 minutes
+      return setTimeout(threatLevel0, 300000, change);
     });
