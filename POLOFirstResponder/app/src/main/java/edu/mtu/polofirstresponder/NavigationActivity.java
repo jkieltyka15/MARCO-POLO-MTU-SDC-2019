@@ -131,7 +131,7 @@ public class NavigationActivity extends AppCompatActivity
 
                         //Update the location in the Firestore
                         FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
-                        db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).update("position", position);
+                        db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).update(position);
 
                         update = false;
 
@@ -164,14 +164,12 @@ public class NavigationActivity extends AppCompatActivity
                 }
             });
 
-            //Update the location for PoloUser
+            //Update the location in the Firestore
             Map<String, Object> position = new HashMap<>();
             position.put("latitude", location.getLatitude());
             position.put("longitude", location.getLongitude());
-
-            //Update the location in the Firestore
             FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
-            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).update("position", position);
+            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).set(position);
         }
     }
 
