@@ -7,7 +7,6 @@ public class YourClass {
         return INSTANCE;
     }
 
-   PoloUser PoloUser = new PoloUser(1, "Kevin",null);
 
 
     public boolean run(int sample_rate, short[] audio) {

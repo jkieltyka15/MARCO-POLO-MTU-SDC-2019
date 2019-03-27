@@ -3,18 +3,12 @@ package edu.mtu.polocivilian;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Base64;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class AudioProcessor implements Runnable {
@@ -53,64 +47,15 @@ public class AudioProcessor implements Runnable {
 
         MainActivity.getInstance().updateUI(gunshot);
 
-        //using the polouser class to set an ID and type for the phone
-        //we have duplicates of the position and are spending a lot of time getting them in the correct data type
-        PoloUser polouser = new PoloUser(0,"Anonymous",latlng);
-        //results from GS processor return boolean, we want to add a 3 option based on the timestamp
-        //for now we will use this statement to deal with the boolean
+//below is the new stuff we added. we can delete the gunshot document after we get everything presented.
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Map<String, Object> userResult = new HashMap<>();
-        userResult.put("Type", polouser.type);
-        userResult.put("ID", polouser.userID);
-        userResult.put("Gunshot Value", polouser.gunshot);
-        userResult.put("Location",polouser.position);
+        db.collection("Civilians").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).update("Position",(new LatLng(location.getLatitude(),location.getLongitude())));
 
-        if (!is_gunshot) {
-            polouser.setGunshot(0);
-        }
-        else {
-            polouser.setGunshot(1);
+        if (is_gunshot) {
 
             db.collection("Gunshots").document().set(new Gunshot(new LatLng(location.getLatitude(), location.getLongitude())));
 
         }
-
-
-
-            db.collection("Civilians").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .set(polouser.getPosition())
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d("FIREBASE_STORAGE", "DocumentSnapshot successfully written!");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("FIREBASE_STORAGE", "Error writing document", e);
-                        }
-                    });
-
-
-
-
-
-       /* FirebaseFirestore.getInstance()
-                .collection("Civilian")
-                .add(gunshot.toMap())
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("FIREBASE_STORAGE", "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("FIREBASE_STORAGE", "Error adding document", e);
-                    }
-                });*/
     }
 }
 
