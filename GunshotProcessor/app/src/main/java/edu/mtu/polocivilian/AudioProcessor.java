@@ -49,11 +49,11 @@ public class AudioProcessor implements Runnable {
 
 //below is the new stuff we added. we can delete the gunshot document after we get everything presented.
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("Civilians").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).set(new LatLng(location.getLatitude(),location.getLongitude()));
+        db.collection("Civilians").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).set(new LatLng(location.getLatitude() , location.getLongitude()));
 
         if (is_gunshot) {
 
-            db.collection("Gunshots").document().set(new Gunshot(new LatLng(location.getLatitude(), location.getLongitude())));
+            db.collection("Gunshots").document().set(new Gunshot(new LatLng(location.getLatitude() , location.getLongitude())));
 
         }
     }
