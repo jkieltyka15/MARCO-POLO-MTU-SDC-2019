@@ -61,7 +61,28 @@ public class AudioProcessor implements Runnable {
         if (!is_gunshot) {
             polouser.setGunshot(0);
         }
-        else polouser.setGunshot(1);
+        else {
+            polouser.setGunshot(1);
+            FirebaseFirestore db= FirebaseFirestore.getInstance();
+            Map<String, Object> userResult = new HashMap<>();
+            userResult.put("Gunshot Value", polouser.gunshot);
+
+            db.collection("Gunshot").document()
+                    .set(polouser.gunshot)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("FIREBASE_STORAGE", "DocumentSnapshot successfully written!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("FIREBASE_STORAGE", "Error writing document", e);
+                        }
+                    });
+
+        }
 
 
 
@@ -72,7 +93,7 @@ public class AudioProcessor implements Runnable {
             userResult.put("Gunshot Value", polouser.gunshot);
 
             db.collection("Civilians").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .set(polouser)
+                    .set(polouser.position)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
