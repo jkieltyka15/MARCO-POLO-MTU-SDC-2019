@@ -41,10 +41,6 @@ public class NavigationActivity extends AppCompatActivity
     private FirebaseAuth mAuth;                             //Firebase authenticator
     private static final String TAG = "Navigation";         //tag for logfile
 
-    //timers
-    CountDownTimer oneMinute;       //countdown timer for one minute
-    CountDownTimer fiveMinutes;     //countdown timer for five minutes
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -129,7 +125,12 @@ public class NavigationActivity extends AppCompatActivity
 
                         //Update the location in the Firestore
                         FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
-                        db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).update(position);
+                        try {
+                            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).update(position);
+                        }
+                        catch (Exception nullRef){
+                            /* do nothing */
+                        }
 
                         update = false;
 
@@ -167,7 +168,12 @@ public class NavigationActivity extends AppCompatActivity
             position.put("latitude", location.getLatitude());
             position.put("longitude", location.getLongitude());
             FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
-            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).set(position);
+            try {
+                db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).set(position);
+            }
+            catch (Exception nullRef){
+                /* do nothing */
+            }
         }
     }
 
@@ -248,8 +254,12 @@ public class NavigationActivity extends AppCompatActivity
 
             //Remove the user from the Firestore
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).delete();
-
+            try {
+                db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).delete();
+            }
+            catch (Exception nullRef){
+                /* do nothing */
+            }
             mAuth.signOut();                                                                        //sign out the Firebase user
             startActivity(new Intent(NavigationActivity.this, LoginActivity.class));   //start the login activity
             this.finish();                                                                          //end the current activity

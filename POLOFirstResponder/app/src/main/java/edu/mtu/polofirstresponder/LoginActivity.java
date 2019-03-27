@@ -46,8 +46,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-    private ImageView mLogoView;
-    private LinearLayout mLogoHeader;
     private View mProgressView;
     private View mLoginFormView;
 
@@ -59,8 +57,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
         // Set up the login form.
         mEmailView = findViewById(R.id.email);
-        mLogoView = findViewById(R.id.logoView);
-        mLogoHeader = findViewById(R.id.logoHeader);
         mPasswordView = findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -155,7 +151,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     /**
      * Shows the progress UI and hides the login form.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
@@ -169,24 +165,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                     public void onAnimationEnd(Animator animation) {
                         mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                     }
-                });
-
-                mLogoView.setVisibility(show ? View.GONE : View.VISIBLE);
-                mLogoView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLogoView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-                });
-
-                mLogoHeader.setVisibility(show ? View.GONE : View.VISIBLE);
-                mLogoHeader.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLogoHeader.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
                 });
 
                 mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -258,7 +236,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     @Override
     public void onStart() {
         super.onStart();
-        if(mAuth.getCurrentUser()!=null){
+        if(mAuth.getCurrentUser()!= null){
             startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
         }
     }
@@ -277,8 +255,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                         //Authentication Successful
                         if (task.isSuccessful()) {
                             showProgress(true);
-                            startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
                             finish();
+                            startActivity(new Intent(getApplicationContext(), NavigationActivity.class));
+
                         }
 
                         //Authentication Failed
