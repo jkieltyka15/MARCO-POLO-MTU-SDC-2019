@@ -250,7 +250,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                             case 2:
                                                 markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                         .position(new LatLng(position.get("latitude"), position.get("longitude")))
-                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                                                        .zIndex(1000000 + 1)));
                                                 break;
                                         }
                                     }
@@ -437,7 +438,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                         case 2:
                                             markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                     .position(new LatLng(position.get("latitude"), position.get("longitude")))
-                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+                                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                                                    .zIndex(1000000 + 1)));
                                             break;
                                     }
                                 }
