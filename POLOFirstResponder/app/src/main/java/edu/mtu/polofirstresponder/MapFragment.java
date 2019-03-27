@@ -291,7 +291,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(doc.getDouble("latitude"), doc.getDouble("longitude")))
                                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
-                                    break;
                                 }
                             }
                             //null pointer exception received
