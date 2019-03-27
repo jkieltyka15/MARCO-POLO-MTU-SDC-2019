@@ -10,6 +10,8 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,10 +21,23 @@ import android.widget.TextView;
 
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 public class MainActivity extends Activity {
     public final String ACTION_USB_PERMISSION = "com.example.controller.USB_PERMISSION";
@@ -34,6 +49,12 @@ public class MainActivity extends Activity {
     UsbSerialDevice serialPort;
     UsbDeviceConnection connection;
     String dir = "x"; // to start off the commands
+
+    FirebaseFirestore db;
+    double leftMotor = 0;
+    double rightMotor = 0;
+
+    FirebaseAuth mAuth;
 
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
         @Override
@@ -113,6 +134,26 @@ public class MainActivity extends Activity {
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         registerReceiver(broadcastReceiver, filter);
+
+        mAuth = FirebaseAuth.getInstance();
+        new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                //current user is signed in
+                if (user != null) {
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                }
+
+                //user is currently not signed in
+                else {
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    mAuth.signOut();                                                                        //sign out the Firebase user
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));   //start the login activity
+                }
+            }
+        };
 
         stopButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
@@ -258,6 +299,48 @@ public class MainActivity extends Activity {
             }
         });
 
+        db = FirebaseFirestore.getInstance();
+
+        db.collection("MARCOs")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
+                        //check the status of the listen
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+
+                        //Cycle through all documents that were changed and update the map
+                        for (QueryDocumentSnapshot doc : value) {
+                            try {
+
+                                //check to see if the doc is available
+                                if (doc != null) {
+                                    Double lm, rm;
+                                    if((lm = doc.getDouble("leftMotor")) != null) {
+                                        leftMotor = lm;
+                                    } else {
+                                        leftMotor = 0;
+                                    }
+                                    if((rm = doc.getDouble("rightMotor")) != null) {
+                                        rightMotor = rm;
+                                    } else {
+                                        rightMotor = 0;
+                                    }
+
+                                    Log.d("MOTORVAL", String.format("Left: %f, Right: %f", leftMotor, rightMotor));
+
+                                }
+                            }
+                            //null pointer exception received
+                            catch (Exception nullRef) {
+                                Log.w(TAG, "POJO Conversion failed.", nullRef);
+                            }
+                        }
+                    }
+                });
 
     }
 
@@ -325,6 +408,18 @@ public class MainActivity extends Activity {
                 ftv.append(ftext);
             }
         });
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        mAuth.signOut();
+    }
+
+    public void logout(View view){
+        mAuth.signOut();
+        Log.d("LOGOUT", "ping");
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 
 }
