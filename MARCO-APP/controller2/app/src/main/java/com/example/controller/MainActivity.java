@@ -1,15 +1,21 @@
 package com.example.controller;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -38,6 +44,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.ContentValues.TAG;
+import static android.location.LocationManager.GPS_PROVIDER;
 
 public class MainActivity extends Activity {
     public final String ACTION_USB_PERMISSION = "com.example.controller.USB_PERMISSION";
@@ -341,6 +348,88 @@ public class MainActivity extends Activity {
                         }
                     }
                 });
+
+        if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
+                && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED) {
+
+            //get user's current location
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+
+            //set a listener to always get the updated location
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
+
+                boolean update = true;  //used as a flag for updating the location to firebase
+
+                /**
+                 * Update the location of the current user in Firestore
+                 *
+                 * @param location - The user's current location
+                 */
+                @Override
+                public void onLocationChanged(Location location) {
+
+                    if (update) {
+
+                        //Update the location for PoloUser
+                        Map<String, Object> position = new HashMap<>();
+                        position.put("latitude", location.getLatitude());
+                        position.put("longitude", location.getLongitude());
+
+                        //Update the location in the Firestore
+                        try {
+                            db.collection("MARCOs").document("MARCO1").update("position", position);
+                        } catch (Exception nullRef) {
+                            /* do nothing */
+                        }
+
+                        update = false;
+
+                        //only update the location every 3 seconds
+                        new CountDownTimer(3000, 1000) {
+
+                            public void onTick(long millisUntilFinished) {
+                                /* do nothing */
+                            }
+
+                            public void onFinish() {
+                                update = true;
+                            }
+                        }.start();
+                    }
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+                    // TODO Auto-generated method stub
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+                    // TODO Auto-generated method stub
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status,
+                                            Bundle extras) {
+                    // TODO Auto-generated method stub
+                }
+            });
+
+            //Update the location in the Firestore
+            Map<String, Object> position = new HashMap<>();
+            position.put("latitude", location.getLatitude());
+            position.put("longitude", location.getLongitude());
+            FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
+            try {
+                db.collection("MARCOs").document("MARCO1").update("position", position);
+                Log.d("POSITION", String.format("lat: %f, long: %f", (double)position.get("latitude"), (double)position.get("longitude")));
+            } catch (Exception nullRef) {
+                /* do nothing */
+                Log.d("POSITION", "Null ref");
+            }
+        }
 
     }
 
