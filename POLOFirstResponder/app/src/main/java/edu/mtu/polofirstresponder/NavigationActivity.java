@@ -118,7 +118,7 @@ public class NavigationActivity extends AppCompatActivity
 
                     if(update) {
 
-                        //Update the location for PoloUser
+                        //Update the location for Polo User
                         Map<String, Object> position = new HashMap<>();
                         position.put("latitude", location.getLatitude());
                         position.put("longitude", location.getLongitude());
@@ -146,8 +146,8 @@ public class NavigationActivity extends AppCompatActivity
                             }
                         }.start();
                     }
-
                 }
+
                 @Override
                 public void onProviderDisabled(String provider) {
                     // TODO Auto-generated method stub
