@@ -10,10 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2ca10142-1c76-4687-ab0f-5ff13dc92711" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../MARCO-APP/controller2/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/Gunshot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MARCO-APP/controller2/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../MARCO-APP/controller2/.idea/misc.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -58,7 +57,7 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="gradle" value="8" />
-          <entry key="java" value="44" />
+          <entry key="java" value="45" />
           <entry key="pro" value="1" />
           <entry key="properties" value="3" />
           <entry key="xml" value="5" />
@@ -67,7 +66,7 @@
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="Groovy" value="8" />
-          <entry key="JAVA" value="44" />
+          <entry key="JAVA" value="45" />
           <entry key="ProGuard File" value="1" />
           <entry key="Properties" value="3" />
           <entry key="XML" value="5" />
@@ -76,14 +75,14 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="gradle" value="73" />
-          <entry key="java" value="5873" />
+          <entry key="java" value="6030" />
           <entry key="xml" value="419" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Groovy" value="73" />
-          <entry key="JAVA" value="5873" />
+          <entry key="JAVA" value="6030" />
           <entry key="XML" value="419" />
         </counts>
       </usages-collector>
@@ -94,23 +93,24 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioProcessor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="77">
-              <caret line="66" column="61" selection-start-line="66" selection-start-column="61" selection-end-line="66" selection-end-column="61" />
+            <state relative-caret-position="120">
+              <caret line="73" column="127" selection-start-line="73" selection-start-column="127" selection-end-line="73" selection-end-column="127" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#2821#3091#0" expanded="true" />
-                <element signature="e#3090#3091#0" expanded="true" />
-                <element signature="e#3168#3429#0" expanded="true" />
-                <element signature="e#3428#3429#0" expanded="true" />
                 <element signature="e#3901#4171#0" expanded="true" />
                 <element signature="e#4170#4171#0" expanded="true" />
-                <element signature="e#4215#4476#0" expanded="true" />
-                <element signature="e#4475#4476#0" expanded="true" />
-                <element signature="e#4601#4851#0" expanded="true" />
-                <element signature="e#4850#4851#0" expanded="true" />
-                <element signature="e#4891#5132#0" expanded="true" />
-                <element signature="e#5131#5132#0" expanded="true" />
+                <element signature="e#4371#4632#0" expanded="true" />
+                <element signature="e#4631#4632#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/Gunshot.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="1" selection-start-line="1" selection-end-line="1" />
             </state>
           </provider>
         </entry>
@@ -148,8 +148,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/PoloUser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-168">
-              <caret line="34" column="58" selection-start-line="34" selection-start-column="58" selection-end-line="34" selection-end-column="58" />
+            <state relative-caret-position="34">
+              <caret line="2" selection-start-line="2" selection-end-line="2" selection-end-column="48" />
             </state>
           </provider>
         </entry>
@@ -166,7 +166,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/GunshotDocument.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="84">
+            <state relative-caret-position="329">
               <caret line="28" column="36" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="40" />
             </state>
           </provider>
@@ -217,14 +217,15 @@
         <option value="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/YourClass.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioProcessor.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/Gunshot.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-11" />
-    <option name="y" value="-11" />
-    <option name="width" value="1463" />
-    <option name="height" value="2123" />
+    <option name="x" value="1997" />
+    <option name="y" value="347" />
+    <option name="width" value="1213" />
+    <option name="height" value="942" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -418,11 +419,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1455" height="935" extended-state="6" />
-    <editor active="true" />
+    <frame x="2231" y="80" width="1216" height="734" extended-state="6" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.20215054" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.16695502" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -430,13 +430,13 @@
       <window_info id="Designer" order="6" />
       <window_info id="Capture Tool" order="7" />
       <window_info anchor="bottom" id="Run" order="0" weight="0.51122195" />
-      <window_info anchor="bottom" id="Logcat" order="1" weight="0.3294509" />
+      <window_info active="true" anchor="bottom" id="Logcat" order="1" visible="true" weight="0.4292845" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.3294509" />
       <window_info anchor="bottom" x="-371" y="163" width="1667" height="515" id="Debug" order="3" weight="0.50748754" />
       <window_info anchor="bottom" id="Terminal" order="4" weight="0.32917705" />
       <window_info anchor="bottom" id="Event Log" order="5" side_tool="true" weight="0.3294509" />
       <window_info anchor="bottom" id="Version Control" order="6" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Build" order="7" visible="true" weight="0.19077307" />
+      <window_info anchor="bottom" id="Build" order="7" weight="0.2296173" />
       <window_info anchor="bottom" id="Android Profiler" order="8" />
       <window_info anchor="bottom" id="Find" order="9" weight="0.34775373" />
       <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
@@ -444,7 +444,7 @@
       <window_info anchor="right" id="Gradle" order="2" />
       <window_info anchor="right" id="Theme Preview" order="3" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
-      <window_info anchor="right" id="Assistant" order="5" visible="true" weight="0.12903225" />
+      <window_info anchor="right" id="Assistant" order="5" visible="true" weight="0.15570934" />
       <window_info anchor="right" id="Preview" order="6" weight="0.32958478" />
     </layout>
   </component>
@@ -541,17 +541,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/GunshotDocument.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/YourClass.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="84">
-          <caret line="28" column="36" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="40" />
+        <state relative-caret-position="-705">
+          <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/PoloUser.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/GunshotDocument.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-168">
-          <caret line="34" column="58" selection-start-line="34" selection-start-column="58" selection-end-line="34" selection-end-column="58" />
+        <state relative-caret-position="329">
+          <caret line="28" column="36" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="40" />
         </state>
       </provider>
     </entry>
@@ -574,31 +574,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/YourClass.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/PoloUser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-705">
-          <caret line="19" column="29" selection-start-line="19" selection-start-column="29" selection-end-line="19" selection-end-column="29" />
+        <state relative-caret-position="34">
+          <caret line="2" selection-start-line="2" selection-end-line="2" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/Gunshot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioProcessor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="77">
-          <caret line="66" column="61" selection-start-line="66" selection-start-column="61" selection-end-line="66" selection-end-column="61" />
+        <state relative-caret-position="120">
+          <caret line="73" column="127" selection-start-line="73" selection-start-column="127" selection-end-line="73" selection-end-column="127" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2821#3091#0" expanded="true" />
-            <element signature="e#3090#3091#0" expanded="true" />
-            <element signature="e#3168#3429#0" expanded="true" />
-            <element signature="e#3428#3429#0" expanded="true" />
             <element signature="e#3901#4171#0" expanded="true" />
             <element signature="e#4170#4171#0" expanded="true" />
-            <element signature="e#4215#4476#0" expanded="true" />
-            <element signature="e#4475#4476#0" expanded="true" />
-            <element signature="e#4601#4851#0" expanded="true" />
-            <element signature="e#4850#4851#0" expanded="true" />
-            <element signature="e#4891#5132#0" expanded="true" />
-            <element signature="e#5131#5132#0" expanded="true" />
+            <element signature="e#4371#4632#0" expanded="true" />
+            <element signature="e#4631#4632#0" expanded="true" />
           </folding>
         </state>
       </provider>

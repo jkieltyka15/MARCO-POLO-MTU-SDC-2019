@@ -58,42 +58,27 @@ public class AudioProcessor implements Runnable {
         PoloUser polouser = new PoloUser(0,"Anonymous",latlng);
         //results from GS processor return boolean, we want to add a 3 option based on the timestamp
         //for now we will use this statement to deal with the boolean
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Map<String, Object> userResult = new HashMap<>();
+        userResult.put("Type", polouser.type);
+        userResult.put("ID", polouser.userID);
+        userResult.put("Gunshot Value", polouser.gunshot);
+        userResult.put("Location",polouser.position);
+
         if (!is_gunshot) {
             polouser.setGunshot(0);
         }
         else {
             polouser.setGunshot(1);
-            FirebaseFirestore db= FirebaseFirestore.getInstance();
-            Map<String, Object> userResult = new HashMap<>();
-            userResult.put("Gunshot Value", polouser.gunshot);
 
-            db.collection("Gunshot").document()
-                    .set(polouser.gunshot)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d("FIREBASE_STORAGE", "DocumentSnapshot successfully written!");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("FIREBASE_STORAGE", "Error writing document", e);
-                        }
-                    });
+            db.collection("Gunshots").document().set(new Gunshot(new LatLng(location.getLatitude(), location.getLongitude())));
 
         }
 
 
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Map<String, Object> userResult = new HashMap<>();
-            userResult.put("Type", polouser.type);
-            userResult.put("ID", polouser.userID);
-            userResult.put("Gunshot Value", polouser.gunshot);
-
             db.collection("Civilians").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .set(polouser.position)
+                    .set(polouser.getPosition())
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
