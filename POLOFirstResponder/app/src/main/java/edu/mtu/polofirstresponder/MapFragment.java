@@ -87,9 +87,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         MapsInitializer.initialize(getContext());
 
-        mGoogleMap = googleMap;                                 //initialize the Google map
-        LocationManager locationManager;                        //used for getting user's current location
-        googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);     //set the view to satellite map
+        mGoogleMap = googleMap;                                         //initialize the Google map
+        LocationManager locationManager;                                //used for getting user's current location
+        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);                //set the view to show satellite and indoor maps
+        googleMap.getUiSettings().setIndoorLevelPickerEnabled(true);    //allow user to pick the floor for an indoor map
+        googleMap.getUiSettings().setCompassEnabled(true);              //show the compass to the user
 
         //initialize the map marker arraylist
         markers = new HashMap<>();
