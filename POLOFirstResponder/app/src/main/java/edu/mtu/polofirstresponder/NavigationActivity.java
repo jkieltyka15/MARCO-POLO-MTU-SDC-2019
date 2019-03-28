@@ -43,8 +43,8 @@ public class NavigationActivity extends AppCompatActivity
     private FirebaseAuth mAuth;                             //Firebase authenticator
     private static final String TAG = "Navigation";         //tag for logfile
 
-    private double latitude = -600;    //latitude of the current user
-    private double longitude = -600;   //longitude of the current user
+    private double latitude = -600;    //latitude of the current user (-600 is an invalid value used as a flag)
+    private double longitude = -600;   //longitude of the current user (-600 is an invalid value used as a flag)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
