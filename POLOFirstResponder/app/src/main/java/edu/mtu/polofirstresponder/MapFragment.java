@@ -120,7 +120,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                         //add the marker to the map
                                         markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                 .position(new LatLng(doc.getDouble("latitude"), doc.getDouble("longitude")))
-                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
+                                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                                                .zIndex(0)));
                                     }
                                 }
                                 //null pointer exception received
@@ -239,6 +240,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                         //get the position of the MARCO device
                                         Map<String, Double> position = (Map<String, Double>) doc.get("position");
 
+                                        //check to see if the marker has already been displayed
+                                        if (markers.containsKey(doc.getId())) {
+                                            markers.get(doc.getId()).remove();
+                                        }
+
                                         //place the marker on the map
                                         switch (doc.getLong("threatLvl").intValue()) {
 
@@ -305,7 +311,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     //add the marker to the map
                                     markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(doc.getDouble("latitude"), doc.getDouble("longitude")))
-                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
+                                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                                            .zIndex(0)));
                                 }
                             }
                             //null pointer exception received
@@ -435,6 +442,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                 try {
                                     //get the position of the MARCO device
                                     Map<String, Double> position = (Map<String, Double>) doc.get("position");
+
+                                    //check to see if the marker has already been displayed
+                                    if (markers.containsKey(doc.getId())) {
+                                        markers.get(doc.getId()).remove();
+                                    }
 
                                     //place the marker on the map
                                     switch (doc.getLong("threatLvl").intValue()) {
