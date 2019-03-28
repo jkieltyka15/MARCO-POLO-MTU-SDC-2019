@@ -43,7 +43,8 @@ public class NavigationActivity extends AppCompatActivity
     private FirebaseAuth mAuth;                             //Firebase authenticator
     private static final String TAG = "Navigation";         //tag for logfile
 
-    private LatLng currentLoc;  //the user's current location
+    private double latitude = -600;    //latitude of the current user
+    private double longitude = -600;   //longitude of the current user
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,10 +125,9 @@ public class NavigationActivity extends AppCompatActivity
 
                         //The last location in the list is the newest
                         Location location = locationList.get(locationList.size() - 1);
-                        currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
                         Map<String, Object> position = new HashMap<>();
-                        position.put("latitude", location.getLatitude());
-                        position.put("longitude", location.getLongitude());
+                        position.put("latitude", latitude = location.getLatitude());
+                        position.put("longitude", longitude = location.getLongitude());
 
                         //Update the location in the Firestore
                         try {
@@ -196,11 +196,13 @@ public class NavigationActivity extends AppCompatActivity
         else if (id == R.id.nav_gunshot) {
 
             //Update the gunshot status to shot detected in the Firestore
-            try {
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                db.collection("Gunshots").document().set(new Gunshot(currentLoc));
-            } catch(Exception nullRef){
-                /* do nothing */
+            if (latitude != -600 && longitude != -600) {
+                try {
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("Gunshots").document().set(new Gunshot(new LatLng(latitude, longitude)));
+                } catch (Exception nullRef) {
+                    /* do nothing */
+                }
             }
 
             //display toast notification that gunshot has been detected
