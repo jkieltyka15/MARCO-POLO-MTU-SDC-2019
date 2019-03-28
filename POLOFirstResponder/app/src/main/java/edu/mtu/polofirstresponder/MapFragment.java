@@ -112,7 +112,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     //check to see if the doc is available
                                     if (doc != null) {
 
-                                        //pace the new marker on the map
+                                        //remove the marker from the map
+                                        if (markers.containsKey(doc.getId())) {
+                                            markers.get(doc.getId()).remove();
+                                        }
+
+                                        //add the marker to the map
                                         markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                 .position(new LatLng(doc.getDouble("latitude"), doc.getDouble("longitude")))
                                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
@@ -147,6 +152,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                                         //only add the marker if it is not the current user
                                         if (!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(doc.getId())) {
+
+                                            //remove the marker from the map
+                                            if (markers.containsKey(doc.getId())) {
+                                                markers.get(doc.getId()).remove();
+                                            }
+
+                                            //add the marker to the map
                                             markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                     .position(new LatLng(doc.getDouble("latitude"), doc.getDouble("longitude")))
                                                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
@@ -158,7 +170,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     Log.w(TAG, "POJO Conversion failed.", nullRef);
                                 }
                             }
-
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -204,7 +215,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     Log.w(TAG, "POJO Conversion failed.", nullRef);
                                 }
                             }
-
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -261,7 +271,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                     }
                                 }
                             }
-
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -286,9 +295,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             try {
 
                                 //check to see if the doc is available
-                                //check to see if the doc is available
                                 if (doc != null) {
 
+                                    //remove the marker from the map
+                                    if (markers.containsKey(doc.getId())) {
+                                        markers.get(doc.getId()).remove();
+                                    }
+
+                                    //add the marker to the map
                                     markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(doc.getDouble("latitude"), doc.getDouble("longitude")))
                                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
@@ -299,7 +313,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                 Log.w(TAG, "POJO Conversion failed.", nullRef);
                             }
                         }
-
                     }
                 });
 
@@ -325,6 +338,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                                     //only add the marker if it is not the current user
                                     if (!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(doc.getId())) {
+
+                                        //remove the marker from the map
+                                        if (markers.containsKey(doc.getId())) {
+                                            markers.get(doc.getId()).remove();
+                                        }
+
+                                        //add the marker to the map
                                         markers.put(doc.getId(), mGoogleMap.addMarker(new MarkerOptions()
                                                 .position(new LatLng(doc.getDouble("latitude"), doc.getDouble("longitude")))
                                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
@@ -336,7 +356,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                 }
                             }
                         }
-
                     }
                 });
 
@@ -449,10 +468,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                 }
                             }
                         }
-
                     }
                 });
-
 
         //check to see if location service is currently permitted
         if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -475,6 +492,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    /**
+     * Check to see if the requested permission has been granted.
+     * @param permission - The permission to be checked.
+     * @return If the permission was granted.
+     */
     private boolean checkPermission(String permission) {
         int res = getContext().checkCallingOrSelfPermission(permission);
         return (res == PackageManager.PERMISSION_GRANTED);
