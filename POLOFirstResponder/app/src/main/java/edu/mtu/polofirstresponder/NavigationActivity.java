@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,6 +21,11 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,9 +33,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.karan.churi.PermissionManager.PermissionManager;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import static android.location.LocationManager.GPS_PROVIDER;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -40,6 +42,9 @@ public class NavigationActivity extends AppCompatActivity
     private PermissionManager permissionManager;            //used for checking permissions
     private FirebaseAuth mAuth;                             //Firebase authenticator
     private static final String TAG = "Navigation";         //tag for logfile
+
+    private double latitude = -600;    //latitude of the current user (-600 is an invalid value used as a flag)
+    private double longitude = -600;   //longitude of the current user (-600 is an invalid value used as a flag)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +63,13 @@ public class NavigationActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        permissionManager = new PermissionManager() {};
+        permissionManager = new PermissionManager() {
+        };
         permissionManager.checkAndRequestPermissions(this);
 
         //if the user is currently not signed in, go to the sign in page
-        if ( FirebaseAuth.getInstance().getCurrentUser() == null ) {
-            this.startActivity(new Intent( NavigationActivity.this, LoginActivity.class ));
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            this.startActivity(new Intent(NavigationActivity.this, LoginActivity.class));
             this.finish();
         }
 
@@ -95,91 +101,52 @@ public class NavigationActivity extends AppCompatActivity
                 .replace(R.id.navBackground, new MapFragment())
                 .commit();
 
-
-        //check to see if location service is currently permitted
-        if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
+        //Check to see if location service is currently permitted
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
                 && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED) {
 
-            //get user's current location
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+            FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);  //used to get the combined network and gps data for better accuracy
+            LocationRequest mLocationRequest = new LocationRequest();                                                         //initialize the location request to be used with the FusedLocationProviderClient
 
-            //set a listener to always get the updated location
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
+            // update location every 3 seconds
+            mLocationRequest.setInterval(3000);
+            mLocationRequest.setFastestInterval(3000);
 
-                boolean update = true;  //used as a flag for updating the location to firebase
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);   //set the location service to the highest accuracy possible
 
-                /**
-                 * Update the location of the current user in Firestore
-                 * @param location - The user's current location
-                 */
+            //called when the FusedLocationProviderClient has a location update
+            LocationCallback mLocationCallback = new LocationCallback() {
+
+                //location update received
                 @Override
-                public void onLocationChanged(Location location) {
+                public void onLocationResult(LocationResult locationResult) {
+                    List<Location> locationList = locationResult.getLocations();
+                    if (locationList.size() > 0) {
 
-                    if(update) {
-
-                        //Update the location for PoloUser
+                        //The last location in the list is the newest
+                        Location location = locationList.get(locationList.size() - 1);
                         Map<String, Object> position = new HashMap<>();
-                        position.put("latitude", location.getLatitude());
-                        position.put("longitude", location.getLongitude());
+                        position.put("latitude", latitude = location.getLatitude());
+                        position.put("longitude", longitude = location.getLongitude());
 
                         //Update the location in the Firestore
-                        FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
                         try {
-                            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).update(position);
-                        }
-                        catch (Exception nullRef){
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).set(position);
+                        } catch (
+                                Exception nullRef) {
                             /* do nothing */
                         }
-
-                        update = false;
-
-                        //only update the location every 3 seconds
-                        new CountDownTimer(3000, 1000) {
-
-                            public void onTick(long millisUntilFinished) {
-                                /* do nothing */
-                            }
-
-                            public void onFinish() {
-                                update = true;
-                            }
-                        }.start();
                     }
-
                 }
-                @Override
-                public void onProviderDisabled(String provider) {
-                    // TODO Auto-generated method stub
-                }
-                @Override
-                public void onProviderEnabled(String provider) {
-                    // TODO Auto-generated method stub
-                }
-                @Override
-                public void onStatusChanged(String provider, int status,
-                                            Bundle extras) {
-                    // TODO Auto-generated method stub
-                }
-            });
-
-            //Update the location in the Firestore
-            Map<String, Object> position = new HashMap<>();
-            position.put("latitude", location.getLatitude());
-            position.put("longitude", location.getLongitude());
-            FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
-            try {
-                db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).set(position);
-            }
-            catch (Exception nullRef){
-                /* do nothing */
-            }
+            };
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());    //get updates to the user's current location
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        permissionManager.checkResult(requestCode,permissions,grantResults);
+        permissionManager.checkResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -218,7 +185,7 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         //go to the map key fragment
-        else if(id == R.id.nav_mapkey){
+        else if (id == R.id.nav_mapkey) {
             setTitle("Map Key");                                                                    //change the title to map key
             fragmentManager.beginTransaction()                                                      //change view to map key
                     .replace(R.id.navBackground, new MapKeyFragment())
@@ -226,24 +193,21 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         //simulate a gunshot event
-        else if(id == R.id.nav_gunshot){
+        else if (id == R.id.nav_gunshot) {
 
-            //check to see if location service is currently permitted
-            if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
-                    && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED) {
-
-                //get user's current location which is the gunshot location
-                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
-
-                //Update the gunshot status to shot detected in the Firestore
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                db.collection("Gunshots").document().set(new Gunshot(new LatLng(location.getLatitude(), location.getLongitude())));
+            //Update the gunshot status to shot detected in the Firestore
+            if (latitude != -600 && longitude != -600) {
+                try {
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("Gunshots").document().set(new Gunshot(new LatLng(latitude, longitude)));
+                } catch (Exception nullRef) {
+                    /* do nothing */
+                }
             }
 
             //display toast notification that gunshot has been detected
             Context appContext = getApplicationContext();
-            Toast gsMessage = Toast.makeText(appContext, "Gunshot Detected", Toast. LENGTH_SHORT);
+            Toast gsMessage = Toast.makeText(appContext, "Gunshot Detected", Toast.LENGTH_SHORT);
             gsMessage.setGravity(Gravity.TOP, 0, 0);
             gsMessage.show();
         }
@@ -256,8 +220,7 @@ public class NavigationActivity extends AppCompatActivity
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             try {
                 db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).delete();
-            }
-            catch (Exception nullRef){
+            } catch (Exception nullRef) {
                 /* do nothing */
             }
             mAuth.signOut();                                                                        //sign out the Firebase user

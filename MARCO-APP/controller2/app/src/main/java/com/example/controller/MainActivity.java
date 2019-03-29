@@ -1,15 +1,23 @@
 package com.example.controller;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,10 +27,24 @@ import android.widget.TextView;
 
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.content.ContentValues.TAG;
+import static android.location.LocationManager.GPS_PROVIDER;
 
 public class MainActivity extends Activity {
     public final String ACTION_USB_PERMISSION = "com.example.controller.USB_PERMISSION";
@@ -34,6 +56,12 @@ public class MainActivity extends Activity {
     UsbSerialDevice serialPort;
     UsbDeviceConnection connection;
     String dir = "x"; // to start off the commands
+
+    FirebaseFirestore db;
+    double leftMotor = 0;
+    double rightMotor = 0;
+
+    FirebaseAuth mAuth;
 
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
         @Override
@@ -113,6 +141,26 @@ public class MainActivity extends Activity {
         filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         registerReceiver(broadcastReceiver, filter);
+
+        mAuth = FirebaseAuth.getInstance();
+        new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                //current user is signed in
+                if (user != null) {
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                }
+
+                //user is currently not signed in
+                else {
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    mAuth.signOut();                                                                        //sign out the Firebase user
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));   //start the login activity
+                }
+            }
+        };
 
         stopButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
@@ -258,6 +306,130 @@ public class MainActivity extends Activity {
             }
         });
 
+        db = FirebaseFirestore.getInstance();
+
+        db.collection("MARCOs")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
+                        //check the status of the listen
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
+
+                        //Cycle through all documents that were changed and update the map
+                        for (QueryDocumentSnapshot doc : value) {
+                            try {
+
+                                //check to see if the doc is available
+                                if (doc != null) {
+                                    Double lm, rm;
+                                    if((lm = doc.getDouble("leftMotor")) != null) {
+                                        leftMotor = lm;
+                                    } else {
+                                        leftMotor = 0;
+                                    }
+                                    if((rm = doc.getDouble("rightMotor")) != null) {
+                                        rightMotor = rm;
+                                    } else {
+                                        rightMotor = 0;
+                                    }
+
+                                    Log.d("MOTORVAL", String.format("Left: %f, Right: %f", leftMotor, rightMotor));
+
+                                }
+                            }
+                            //null pointer exception received
+                            catch (Exception nullRef) {
+                                Log.w(TAG, "POJO Conversion failed.", nullRef);
+                            }
+                        }
+                    }
+                });
+
+        if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
+                && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED) {
+
+            //get user's current location
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+
+            //set a listener to always get the updated location
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
+
+                boolean update = true;  //used as a flag for updating the location to firebase
+
+                /**
+                 * Update the location of the current user in Firestore
+                 *
+                 * @param location - The user's current location
+                 */
+                @Override
+                public void onLocationChanged(Location location) {
+
+                    if (update) {
+
+                        //Update the location for PoloUser
+                        Map<String, Object> position = new HashMap<>();
+                        position.put("latitude", location.getLatitude());
+                        position.put("longitude", location.getLongitude());
+
+                        //Update the location in the Firestore
+                        try {
+                            db.collection("MARCOs").document("MARCO1").update("position", position);
+                        } catch (Exception nullRef) {
+                            /* do nothing */
+                        }
+
+                        update = false;
+
+                        //only update the location every 3 seconds
+                        new CountDownTimer(3000, 1000) {
+
+                            public void onTick(long millisUntilFinished) {
+                                /* do nothing */
+                            }
+
+                            public void onFinish() {
+                                update = true;
+                            }
+                        }.start();
+                    }
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+                    // TODO Auto-generated method stub
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+                    // TODO Auto-generated method stub
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status,
+                                            Bundle extras) {
+                    // TODO Auto-generated method stub
+                }
+            });
+
+            //Update the location in the Firestore
+            Map<String, Object> position = new HashMap<>();
+            position.put("latitude", location.getLatitude());
+            position.put("longitude", location.getLongitude());
+            FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
+            try {
+                db.collection("MARCOs").document("MARCO1").update("position", position);
+                Log.d("POSITION", String.format("lat: %f, long: %f", (double)position.get("latitude"), (double)position.get("longitude")));
+            } catch (Exception nullRef) {
+                /* do nothing */
+                Log.d("POSITION", "Null ref");
+            }
+        }
 
     }
 
@@ -325,6 +497,18 @@ public class MainActivity extends Activity {
                 ftv.append(ftext);
             }
         });
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        mAuth.signOut();
+    }
+
+    public void logout(View view){
+        mAuth.signOut();
+        Log.d("LOGOUT", "ping");
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 
 }
