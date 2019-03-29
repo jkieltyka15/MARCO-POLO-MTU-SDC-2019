@@ -27,12 +27,9 @@ import android.widget.TextView;
 
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -42,6 +39,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static android.content.ContentValues.TAG;
 import static android.location.LocationManager.GPS_PROVIDER;
@@ -55,11 +54,76 @@ public class MainActivity extends Activity {
     UsbDevice device;
     UsbSerialDevice serialPort;
     UsbDeviceConnection connection;
+    boolean shutdown = false;
+    Thread sensorThread;
+    //TODO: ANYTHING THAT MODIFIES THE SENSOR VALUES MUST FIRST CALL LOCK.LOCK().
+    //TODO: MODIFICATION SHOULD BE WITHIN A TRY BLOCK AND FOLLOWED BY A FINALLY BLOCK THAT CALLS LOCK.UNLOCK()
+    //TODO: A RACE CONDITION WILL EXIST OTHERWISE
+    //TODO: RACE CONDITION = BAD
+    Lock lock = new ReentrantLock();
     String dir = "x"; // to start off the commands
 
     FirebaseFirestore db;
     double leftMotor = 0;
     double rightMotor = 0;
+
+    //TODO: LOCK BEFORE MODIFYING ANY OF THESE VARIABLES
+    double mq2 = 0, mq5 = 0, mq7 = 0, o2 = 0, temp = 0;
+
+    // Runnable that will listen for changes on the sensor values
+    private class sensorChangeDetectorWorker implements Runnable {
+        private double prevMq2, prevMq5, prevMq7, prevO2, prevTemp;
+        private DocumentReference doc = db.collection("MARCOs").document("MARCO1");
+
+        @Override
+        public void run() {
+            //TODO: SEE THIS FOR HOW TO IMPLEMENT THE LOCK
+            lock.lock();
+            try {
+                // Initialize previous values
+                prevMq2 = mq2;
+                prevMq5 = mq5;
+                prevMq7 = mq7;
+                prevO2 = o2;
+                prevTemp = temp;
+            } finally {
+                lock.unlock();
+            }
+
+            while(!shutdown) {
+                // If values have changed push to Firebase
+                lock.lock();
+                try {
+                    if (mq2 != prevMq2)
+                        doc.update("mq2", mq2);
+                    if (mq5 != prevMq5)
+                        doc.update("mq5", mq5);
+                    if (mq7 != prevMq7)
+                        doc.update("mq7", mq7);
+                    if (o2 != prevO2)
+                        doc.update("o2", o2);
+                    if (temp != prevTemp)
+                        doc.update("temp", temp);
+
+                    // Update the previous values
+                    prevMq2 = mq2;
+                    prevMq5 = mq5;
+                    prevMq7 = mq7;
+                    prevO2 = o2;
+                    prevTemp = temp;
+                } finally {
+                    lock.unlock();
+                }
+
+                // Sleep for 3 sec. Adjust this if you want to change frequency of updates
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     FirebaseAuth mAuth;
 
@@ -161,6 +225,12 @@ public class MainActivity extends Activity {
                 }
             }
         };
+
+        db = FirebaseFirestore.getInstance();
+
+        // This starts the thread that monitors sensor values (and sends to Firebase)
+        sensorThread = new Thread(new sensorChangeDetectorWorker());
+        sensorThread.start();
 
         stopButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
@@ -305,8 +375,6 @@ public class MainActivity extends Activity {
                 onClickClear(v);
             }
         });
-
-        db = FirebaseFirestore.getInstance();
 
         db.collection("MARCOs")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -501,8 +569,16 @@ public class MainActivity extends Activity {
 
     @Override
     public void onDestroy(){
-        super.onDestroy();
         mAuth.signOut();
+
+        // Shuts down and joins the sensor thread when this activity is destroyed
+        shutdown = true;
+        try{
+            sensorThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
     }
 
     public void logout(View view){
