@@ -55,7 +55,8 @@ public class MainActivity extends Activity {
     UsbSerialDevice serialPort;
     UsbDeviceConnection connection;
     boolean shutdown = false;
-    Thread sensorThread;
+    Thread sensorMonitorThread;
+    Thread sensorQueryThread;
     String databuf = "";
     //TODO: ANYTHING THAT MODIFIES THE SENSOR VALUES MUST FIRST CALL LOCK.LOCK().
     //TODO: MODIFICATION SHOULD BE WITHIN A TRY BLOCK AND FOLLOWED BY A FINALLY BLOCK THAT CALLS LOCK.UNLOCK()
@@ -117,6 +118,21 @@ public class MainActivity extends Activity {
                 }
 
                 // Sleep for 3 sec. Adjust this if you want to change frequency of updates
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private class sensorQueryWorker implements Runnable {
+        @Override
+        public void run() {
+            dir = "123ot";
+            while(!shutdown) {
+                onClickSend(null);
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
@@ -195,6 +211,9 @@ public class MainActivity extends Activity {
                             serialPort.read(mCallback);
                             tvAppend(textView,"Serial Connection Opened!\n");
 
+                            sensorQueryThread = new Thread(new sensorQueryWorker());
+                            sensorQueryThread.start();
+
                         } else {
                             Log.d("SERIAL", "PORT NOT OPEN");
                         }
@@ -261,8 +280,8 @@ public class MainActivity extends Activity {
         db = FirebaseFirestore.getInstance();
 
         // This starts the thread that monitors sensor values (and sends to Firebase)
-        sensorThread = new Thread(new sensorChangeDetectorWorker());
-        sensorThread.start();
+        sensorMonitorThread = new Thread(new sensorChangeDetectorWorker());
+        sensorMonitorThread.start();
 
         stopButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
@@ -610,7 +629,8 @@ public class MainActivity extends Activity {
         // Shuts down and joins the sensor thread when this activity is destroyed
         shutdown = true;
         try{
-            sensorThread.join();
+            sensorMonitorThread.join();
+            sensorQueryThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
