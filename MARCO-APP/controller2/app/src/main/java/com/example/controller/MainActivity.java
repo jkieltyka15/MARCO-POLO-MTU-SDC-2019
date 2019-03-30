@@ -56,6 +56,7 @@ public class MainActivity extends Activity {
     UsbDeviceConnection connection;
     boolean shutdown = false;
     Thread sensorThread;
+    String databuf = "";
     //TODO: ANYTHING THAT MODIFIES THE SENSOR VALUES MUST FIRST CALL LOCK.LOCK().
     //TODO: MODIFICATION SHOULD BE WITHIN A TRY BLOCK AND FOLLOWED BY A FINALLY BLOCK THAT CALLS LOCK.UNLOCK()
     //TODO: A RACE CONDITION WILL EXIST OTHERWISE
@@ -130,13 +131,44 @@ public class MainActivity extends Activity {
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
         @Override
         public void onReceivedData(byte[] arg0) {
-            String data = null;
+            String recData;
             try {
-                data = new String(arg0, "UTF-8");
-                data.concat("/n");
+                recData = new String(arg0, "UTF-8");
+                databuf += recData;
                 //textView.setText("");
-               //textView.setText(" ");
-                tvAppend(textView, data);
+                //textView.setText(" ");
+                int index = databuf.indexOf('*');
+                if(index != -1) {
+                    String data = databuf.substring(0, index);
+                    databuf = databuf.substring(index+1);
+                    tvAppend(textView, data);
+                    char sensor = data.charAt(0);
+                    double value = Double.parseDouble(data.substring(2));
+                    lock.lock();
+                    try {
+                        switch (sensor) {
+                            case 'o':
+                                o2 = value;
+                                break;
+                            case 't':
+                                temp = value;
+                                break;
+                            case '1':
+                                mq2 = value;
+                                break;
+                            case '2':
+                                mq5 = value;
+                                break;
+                            case '3':
+                                mq7 = value;
+                                break;
+                            default:
+                                break;
+                        }
+                    } finally {
+                        lock.unlock();
+                    }
+                }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -249,14 +281,14 @@ public class MainActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event)
             {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    dir = "w";
+                    dir = "123ot";
                     onClickSend(v);
                     Log.d("Pressed", "Button pressed");
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    dir = "x";
-                    onClickSend(v);
-                    Log.d("Released", "Button released");
+//                    dir = "x";
+//                    onClickSend(v);
+//                    Log.d("Released", "Button released");
                     // TODO Auto-generated method stub
                 }
                 return false;
@@ -441,14 +473,16 @@ public class MainActivity extends Activity {
 
                         //Update the location for PoloUser
                         Map<String, Object> position = new HashMap<>();
-                        position.put("latitude", location.getLatitude());
-                        position.put("longitude", location.getLongitude());
+                        if(location != null) {
+                            position.put("latitude", location.getLatitude());
+                            position.put("longitude", location.getLongitude());
 
-                        //Update the location in the Firestore
-                        try {
-                            db.collection("MARCOs").document("MARCO1").update("position", position);
-                        } catch (Exception nullRef) {
-                            /* do nothing */
+                            //Update the location in the Firestore
+                            try {
+                                db.collection("MARCOs").document("MARCO1").update("position", position);
+                            } catch (Exception nullRef) {
+                                /* do nothing */
+                            }
                         }
 
                         update = false;
@@ -487,15 +521,17 @@ public class MainActivity extends Activity {
 
             //Update the location in the Firestore
             Map<String, Object> position = new HashMap<>();
-            position.put("latitude", location.getLatitude());
-            position.put("longitude", location.getLongitude());
-            FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
-            try {
-                db.collection("MARCOs").document("MARCO1").update("position", position);
-                Log.d("POSITION", String.format("lat: %f, long: %f", (double)position.get("latitude"), (double)position.get("longitude")));
-            } catch (Exception nullRef) {
-                /* do nothing */
-                Log.d("POSITION", "Null ref");
+            if(location != null) {
+                position.put("latitude", location.getLatitude());
+                position.put("longitude", location.getLongitude());
+                FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
+                try {
+                    db.collection("MARCOs").document("MARCO1").update("position", position);
+                    Log.d("POSITION", String.format("lat: %f, long: %f", (double) position.get("latitude"), (double) position.get("longitude")));
+                } catch (Exception nullRef) {
+                    /* do nothing */
+                    Log.d("POSITION", "Null ref");
+                }
             }
         }
 
