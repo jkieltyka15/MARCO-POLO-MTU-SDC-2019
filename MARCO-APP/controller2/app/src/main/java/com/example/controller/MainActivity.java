@@ -37,6 +37,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -63,11 +64,8 @@ public class MainActivity extends Activity {
     //TODO: A RACE CONDITION WILL EXIST OTHERWISE
     //TODO: RACE CONDITION = BAD
     Lock lock = new ReentrantLock();
-    String dir = "x"; // to start off the commands
 
     FirebaseFirestore db;
-    double leftMotor = 0;
-    double rightMotor = 0;
 
     //TODO: LOCK BEFORE MODIFYING ANY OF THESE VARIABLES
     double mq2 = 0, mq5 = 0, mq7 = 0, o2 = 0, temp = 0;
@@ -130,9 +128,8 @@ public class MainActivity extends Activity {
     private class sensorQueryWorker implements Runnable {
         @Override
         public void run() {
-            dir = "123ot";
             while(!shutdown) {
-                onClickSend(null);
+                onClickSend("123ot".getBytes());
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
@@ -151,8 +148,6 @@ public class MainActivity extends Activity {
             try {
                 recData = new String(arg0, "UTF-8");
                 databuf += recData;
-                //textView.setText("");
-                //textView.setText(" ");
                 int index = databuf.indexOf('*');
                 if(index != -1) {
                     String data = databuf.substring(0, index);
@@ -285,8 +280,7 @@ public class MainActivity extends Activity {
 
         stopButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                dir = "x";
-                onClickSend(v);
+                onClickSend("x".getBytes());
 
             }
 
@@ -300,13 +294,12 @@ public class MainActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event)
             {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    dir = "123ot";
-                    onClickSend(v);
+                    onClickSend("123ot".getBytes());
                     Log.d("Pressed", "Button pressed");
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
 //                    dir = "x";
-//                    onClickSend(v);
+//                    onClickSend("x".getBytes());
 //                    Log.d("Released", "Button released");
                     // TODO Auto-generated method stub
                 }
@@ -321,13 +314,11 @@ public class MainActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event)
             {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    dir = "a";
-                    onClickSend(v);
+                    onClickSend("a".getBytes());
                     Log.d("Pressed", "Button pressed");
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    dir = "x";
-                    onClickSend(v);
+                    onClickSend("x".getBytes());
                     Log.d("Released", "Button released");
                     // TODO Auto-generated method stub
                 }
@@ -341,13 +332,11 @@ public class MainActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event)
             {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    dir = "s";
-                    onClickSend(v);
+                    onClickSend("s".getBytes());
                     Log.d("Pressed", "Button pressed");
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    dir = "x";
-                    onClickSend(v);
+                    onClickSend("x".getBytes());
                     Log.d("Released", "Button released");
                     // TODO Auto-generated method stub
                 }
@@ -361,13 +350,11 @@ public class MainActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event)
             {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    dir = "d";
-                    onClickSend(v);
+                    onClickSend("d".getBytes());
                     Log.d("Pressed", "Button pressed");
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    dir = "x";
-                    onClickSend(v);
+                    onClickSend("x".getBytes());
                     Log.d("Released", "Button released");
                     // TODO Auto-generated method stub
                 }
@@ -375,52 +362,6 @@ public class MainActivity extends Activity {
             }
         });
 
-
-        /**
-         * the following code works for sending data its just its just commented out
-         * for the testing of sending two commands on ButtonPress and ButtonRelease events (Action_down)
-         * and (Action_UP). can explain what is happening if you have any concerns.
-         */
-
-//        forwardButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v){
-//                dir = "w";
-//                onClickSend(v);
-//            }
-//        });
-//        forwardButton.setOnTouchListener(new View.OnTouchListener(){
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch(event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        // PRESSED
-//                        return true; // if you want to handle the touch event
-//                    case MotionEvent.ACTION_UP:
-//                        // RELEASED
-//                        return true; // if you want to handle the touch event
-//                }
-//                return false;
-//            }
-//        });
-//        leftButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v){
-//                dir = "a";
-//                onClickSend(v);
-//            }
-//        });
-//        backButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v){
-//                dir = "s";
-//                onClickSend(v);
-//            }
-//        });
-//        rightButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v){
-//                dir = "d";
-//
-//                onClickSend(v);
-//            }
-//        });
         clearButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
                 onClickClear(v);
@@ -445,19 +386,18 @@ public class MainActivity extends Activity {
                                 //check to see if the doc is available
                                 if (doc != null) {
                                     Double lm, rm;
+                                    byte left = 0x5A, right = 0x5A;
                                     if((lm = doc.getDouble("leftMotor")) != null) {
-                                        leftMotor = lm;
-                                    } else {
-                                        leftMotor = 0;
+                                        left = (byte)((int)((double)lm) - 90);
                                     }
                                     if((rm = doc.getDouble("rightMotor")) != null) {
-                                        rightMotor = rm;
-                                    } else {
-                                        rightMotor = 0;
+                                        right = (byte)((int)((double)rm) - 90);
                                     }
 
-                                    Log.d("MOTORVAL", String.format("Left: %f, Right: %f", leftMotor, rightMotor));
-
+                                    Log.d("MOTORS", "s" + left + right);
+                                    onClickSend("s".getBytes());
+                                    byte[] bytes = {left, right};
+                                    onClickSend(bytes);
                                 }
                             }
                             //null pointer exception received
@@ -590,12 +530,9 @@ public class MainActivity extends Activity {
 
     }
 
-    public void onClickSend(View view) {
-        String string = editText.getText().toString();
-        String temp = dir;
-        //String string = command.toString();
-        serialPort.write(temp.getBytes());
-        tvAppend(textView, "\nData Sent : " + temp + "\n");
+    public void onClickSend(byte[] bytes) {
+        serialPort.write(bytes);
+        tvAppend(textView, "\nData Sent : " + Arrays.toString(bytes) + "\n");
 
     }
 
