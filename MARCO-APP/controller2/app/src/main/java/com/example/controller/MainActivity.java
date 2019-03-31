@@ -16,6 +16,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -27,6 +28,11 @@ import android.widget.TextView;
 
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -39,6 +45,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -66,6 +73,9 @@ public class MainActivity extends Activity {
     Lock lock = new ReentrantLock();
 
     FirebaseFirestore db;
+
+    private double latitude = -600;    //latitude of the MARCO (-600 is an invalid value used as a flag)
+    private double longitude = -600;   //longitude of the MARCO (-600 is an invalid value used as a flag)
 
     //TODO: LOCK BEFORE MODIFYING ANY OF THESE VARIABLES
     double mq2 = 0, mq5 = 0, mq7 = 0, o2 = 0, temp = 0;
@@ -286,7 +296,6 @@ public class MainActivity extends Activity {
 
         });
 
-
         forwardButton.setOnTouchListener(new View.OnTouchListener()
         {
 
@@ -408,92 +417,47 @@ public class MainActivity extends Activity {
                     }
                 });
 
-        if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
+        //Check to see if location service is currently permitted
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
                 && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED) {
 
-            //get user's current location
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+            FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);  //used to get the combined network and gps data for better accuracy
+            LocationRequest mLocationRequest = new LocationRequest();                                                         //initialize the location request to be used with the FusedLocationProviderClient
 
-            //set a listener to always get the updated location
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
+            // update location every second
+            mLocationRequest.setInterval(1000);
+            mLocationRequest.setFastestInterval(1000);
 
-                boolean update = true;  //used as a flag for updating the location to firebase
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);   //set the location service to the highest accuracy possible
 
-                /**
-                 * Update the location of the current user in Firestore
-                 *
-                 * @param location - The user's current location
-                 */
+            //called when the FusedLocationProviderClient has a location update
+            LocationCallback mLocationCallback = new LocationCallback() {
+
+                //location update received
                 @Override
-                public void onLocationChanged(Location location) {
+                public void onLocationResult(LocationResult locationResult) {
+                    List<Location> locationList = locationResult.getLocations();
+                    if (locationList.size() > 0) {
 
-                    if (update) {
-
-                        //Update the location for PoloUser
+                        //The last location in the list is the newest
+                        Location location = locationList.get(locationList.size() - 1);
                         Map<String, Object> position = new HashMap<>();
-                        if(location != null) {
-                            position.put("latitude", location.getLatitude());
-                            position.put("longitude", location.getLongitude());
+                        position.put("latitude", latitude = location.getLatitude());
+                        position.put("longitude", longitude = location.getLongitude());
 
-                            //Update the location in the Firestore
-                            try {
-                                db.collection("MARCOs").document("MARCO1").update("position", position);
-                            } catch (Exception nullRef) {
-                                /* do nothing */
-                            }
+                        //Update the location in the Firestore
+                        try {
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).set(position);
+                        } catch (
+                                Exception nullRef) {
+                            /* do nothing */
                         }
-
-                        update = false;
-
-                        //only update the location every 3 seconds
-                        new CountDownTimer(3000, 1000) {
-
-                            public void onTick(long millisUntilFinished) {
-                                /* do nothing */
-                            }
-
-                            public void onFinish() {
-                                update = true;
-                            }
-                        }.start();
                     }
-
                 }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-                    // TODO Auto-generated method stub
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-                    // TODO Auto-generated method stub
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status,
-                                            Bundle extras) {
-                    // TODO Auto-generated method stub
-                }
-            });
-
-            //Update the location in the Firestore
-            Map<String, Object> position = new HashMap<>();
-            if(location != null) {
-                position.put("latitude", location.getLatitude());
-                position.put("longitude", location.getLongitude());
-                FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
-                try {
-                    db.collection("MARCOs").document("MARCO1").update("position", position);
-                    Log.d("POSITION", String.format("lat: %f, long: %f", (double) position.get("latitude"), (double) position.get("longitude")));
-                } catch (Exception nullRef) {
-                    /* do nothing */
-                    Log.d("POSITION", "Null ref");
-                }
-            }
+            };
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());    //get updates to the user's current location
         }
-
     }
 
     public void setUiEnabled(boolean bool) {

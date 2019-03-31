@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">controller</string>
+    <string name="app_name">MARCO</string>
     <string name="nav_header_desc">Navigation header</string>
     <!-- Strings related to login -->
     <string name="prompt_email">email</string>
