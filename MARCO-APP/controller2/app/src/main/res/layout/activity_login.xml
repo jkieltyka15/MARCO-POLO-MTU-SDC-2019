@@ -14,36 +14,15 @@
     tools:context=".LoginActivity">
 
     <!-- Login progress -->
-    <LinearLayout
-        android:id="@+id/logoHeader"
-        android:layout_width="match_parent"
-        android:layout_height="113dp"
-        android:background="@color/colorPrimary"
-        android:gravity="bottom"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
-        <ImageView
-            android:id="@+id/logoView"
-            android:layout_width="match_parent"
-            android:layout_height="88dp"
-            android:contentDescription="@string/nav_header_desc"
-            android:paddingTop="@dimen/nav_header_vertical_spacing"
-            app:srcCompat="@drawable/afrllogo" />
-
-    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/login_progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity = "center"
+        android:layout_gravity="center"
         android:layout_marginBottom="8dp"
+        android:foregroundGravity="top|center"
         android:indeterminateTint="@color/colorPrimary"
         android:visibility="gone" />
 
@@ -57,6 +36,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/logoView"
+                android:layout_width="match_parent"
+                android:layout_height="102dp"
+                android:background="@drawable/logobackground"
+                android:contentDescription="@string/nav_header_desc"
+                android:padding="@dimen/nav_header_vertical_spacing"
+                android:paddingTop="@dimen/nav_header_vertical_spacing"
+                app:srcCompat="@drawable/marcopolo" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -108,4 +97,5 @@
 
         </LinearLayout>
     </ScrollView>
+
 </LinearLayout>

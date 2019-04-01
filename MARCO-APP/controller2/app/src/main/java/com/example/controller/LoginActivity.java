@@ -24,8 +24,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,8 +44,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-    private ImageView mLogoView;
-    private LinearLayout mLogoHeader;
     private View mProgressView;
     private View mLoginFormView;
 
@@ -59,8 +55,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
         // Set up the login form.
         mEmailView = findViewById(R.id.email);
-        mLogoView = findViewById(R.id.logoView);
-        mLogoHeader = findViewById(R.id.logoHeader);
         mPasswordView = findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -84,7 +78,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        permissionManager = new PermissionManager() {};
+        permissionManager = new PermissionManager() {
+        };
         permissionManager.checkAndRequestPermissions(this);
 
         mAuth = FirebaseAuth.getInstance();
@@ -92,7 +87,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        permissionManager.checkResult(requestCode,permissions,grantResults);
+        permissionManager.checkResult(requestCode, permissions, grantResults);
     }
 
     /**
@@ -155,7 +150,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     /**
      * Shows the progress UI and hides the login form.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
@@ -165,38 +160,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         mLoginFormView.animate().setDuration(shortAnimTime).alpha(
                 show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                    }
-                });
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
 
-                mLogoView.setVisibility(show ? View.GONE : View.VISIBLE);
-                mLogoView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLogoView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-                });
-
-                mLogoHeader.setVisibility(show ? View.GONE : View.VISIBLE);
-                mLogoHeader.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLogoHeader.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-                });
-
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mProgressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
                 mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                     mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                    }
-                });
+            }
+        });
     }
 
     @Override
@@ -204,7 +181,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         return new CursorLoader(this,
                 // Retrieve data rows for the device user's 'profile' contact.
                 Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
+                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), LoginActivity.ProfileQuery.PROJECTION,
 
                 // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE +
@@ -221,7 +198,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
+            emails.add(cursor.getString(LoginActivity.ProfileQuery.ADDRESS));
             cursor.moveToNext();
         }
 
@@ -258,7 +235,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     @Override
     public void onStart() {
         super.onStart();
-        if(mAuth.getCurrentUser()!=null){
+        if (mAuth.getCurrentUser() != null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
     }
@@ -266,7 +243,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     /**
      * Authenticate the user with the given credentials.
      */
-    private void signIn(String email, String password){
+    private void signIn(String email, String password) {
 
         //Attempt to authenticate using the Firebase Authenticator
         mAuth.signInWithEmailAndPassword(email, password)
@@ -277,14 +254,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                         //Authentication Successful
                         if (task.isSuccessful()) {
                             showProgress(true);
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             finish();
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
                         }
 
                         //Authentication Failed
                         else {
                             Context appContext = getApplicationContext();
-                            Toast mailMessage = Toast.makeText(appContext, "Incorrect email or password", Toast. LENGTH_SHORT);
+                            Toast mailMessage = Toast.makeText(appContext, "Incorrect email or password", Toast.LENGTH_SHORT);
                             mailMessage.setGravity(Gravity.TOP, 0, 0); //optional
                             mailMessage.show();
                         }

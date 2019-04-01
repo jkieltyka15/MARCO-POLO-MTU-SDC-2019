@@ -16,6 +16,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -27,12 +28,14 @@ import android.widget.TextView;
 
 import com.felhr.usbserial.UsbSerialDevice;
 import com.felhr.usbserial.UsbSerialInterface;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -40,8 +43,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static android.content.ContentValues.TAG;
 import static android.location.LocationManager.GPS_PROVIDER;
@@ -55,24 +62,134 @@ public class MainActivity extends Activity {
     UsbDevice device;
     UsbSerialDevice serialPort;
     UsbDeviceConnection connection;
-    String dir = "x"; // to start off the commands
+    boolean shutdown = false;
+    Thread sensorMonitorThread;
+    Thread sensorQueryThread;
+    String databuf = "";
+    //TODO: ANYTHING THAT MODIFIES THE SENSOR VALUES MUST FIRST CALL LOCK.LOCK().
+    //TODO: MODIFICATION SHOULD BE WITHIN A TRY BLOCK AND FOLLOWED BY A FINALLY BLOCK THAT CALLS LOCK.UNLOCK()
+    //TODO: A RACE CONDITION WILL EXIST OTHERWISE
+    //TODO: RACE CONDITION = BAD
+    Lock lock = new ReentrantLock();
 
     FirebaseFirestore db;
-    double leftMotor = 0;
-    double rightMotor = 0;
+
+    private double latitude = -600;    //latitude of the MARCO (-600 is an invalid value used as a flag)
+    private double longitude = -600;   //longitude of the MARCO (-600 is an invalid value used as a flag)
+
+    //TODO: LOCK BEFORE MODIFYING ANY OF THESE VARIABLES
+    double mq2 = 0, mq5 = 0, mq7 = 0, o2 = 0, temp = 0;
+
+    // Runnable that will listen for changes on the sensor values
+    private class sensorChangeDetectorWorker implements Runnable {
+        private double prevMq2, prevMq5, prevMq7, prevO2, prevTemp;
+        private DocumentReference doc = db.collection("MARCOs").document("MARCO1");
+
+        @Override
+        public void run() {
+            //TODO: SEE THIS FOR HOW TO IMPLEMENT THE LOCK
+            lock.lock();
+            try {
+                // Initialize previous values
+                prevMq2 = mq2;
+                prevMq5 = mq5;
+                prevMq7 = mq7;
+                prevO2 = o2;
+                prevTemp = temp;
+            } finally {
+                lock.unlock();
+            }
+
+            while(!shutdown) {
+                // If values have changed push to Firebase
+                lock.lock();
+                try {
+                    if (mq2 != prevMq2)
+                        doc.update("mq2", mq2);
+                    if (mq5 != prevMq5)
+                        doc.update("mq5", mq5);
+                    if (mq7 != prevMq7)
+                        doc.update("mq7", mq7);
+                    if (o2 != prevO2)
+                        doc.update("o2", o2);
+                    if (temp != prevTemp)
+                        doc.update("temp", temp);
+
+                    // Update the previous values
+                    prevMq2 = mq2;
+                    prevMq5 = mq5;
+                    prevMq7 = mq7;
+                    prevO2 = o2;
+                    prevTemp = temp;
+                } finally {
+                    lock.unlock();
+                }
+
+                // Sleep for 3 sec. Adjust this if you want to change frequency of updates
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private class sensorQueryWorker implements Runnable {
+        @Override
+        public void run() {
+            while(!shutdown) {
+                onClickSend("123ot".getBytes());
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     FirebaseAuth mAuth;
 
     UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() { //Defining a Callback which triggers whenever data is read.
         @Override
         public void onReceivedData(byte[] arg0) {
-            String data = null;
+            String recData;
             try {
-                data = new String(arg0, "UTF-8");
-                data.concat("/n");
-                //textView.setText("");
-               //textView.setText(" ");
-                tvAppend(textView, data);
+                recData = new String(arg0, "UTF-8");
+                databuf += recData;
+                int index = databuf.indexOf('*');
+                if(index != -1) {
+                    String data = databuf.substring(0, index);
+                    databuf = databuf.substring(index+1);
+                    tvAppend(textView, data);
+                    char sensor = data.charAt(0);
+                    double value = Double.parseDouble(data.substring(2));
+                    lock.lock();
+                    try {
+                        switch (sensor) {
+                            case 'o':
+                                o2 = value;
+                                break;
+                            case 't':
+                                temp = value;
+                                break;
+                            case '1':
+                                mq2 = value;
+                                break;
+                            case '2':
+                                mq5 = value;
+                                break;
+                            case '3':
+                                mq7 = value;
+                                break;
+                            default:
+                                break;
+                        }
+                    } finally {
+                        lock.unlock();
+                    }
+                }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -98,6 +215,9 @@ public class MainActivity extends Activity {
                             serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
                             serialPort.read(mCallback);
                             tvAppend(textView,"Serial Connection Opened!\n");
+
+                            sensorQueryThread = new Thread(new sensorQueryWorker());
+                            sensorQueryThread.start();
 
                         } else {
                             Log.d("SERIAL", "PORT NOT OPEN");
@@ -162,15 +282,19 @@ public class MainActivity extends Activity {
             }
         };
 
+        db = FirebaseFirestore.getInstance();
+
+        // This starts the thread that monitors sensor values (and sends to Firebase)
+        sensorMonitorThread = new Thread(new sensorChangeDetectorWorker());
+        sensorMonitorThread.start();
+
         stopButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                dir = "x";
-                onClickSend(v);
+                onClickSend("x".getBytes());
 
             }
 
         });
-
 
         forwardButton.setOnTouchListener(new View.OnTouchListener()
         {
@@ -179,14 +303,13 @@ public class MainActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event)
             {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    dir = "w";
-                    onClickSend(v);
+                    onClickSend("123ot".getBytes());
                     Log.d("Pressed", "Button pressed");
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    dir = "x";
-                    onClickSend(v);
-                    Log.d("Released", "Button released");
+//                    dir = "x";
+//                    onClickSend("x".getBytes());
+//                    Log.d("Released", "Button released");
                     // TODO Auto-generated method stub
                 }
                 return false;
@@ -200,13 +323,11 @@ public class MainActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event)
             {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    dir = "a";
-                    onClickSend(v);
+                    onClickSend("a".getBytes());
                     Log.d("Pressed", "Button pressed");
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    dir = "x";
-                    onClickSend(v);
+                    onClickSend("x".getBytes());
                     Log.d("Released", "Button released");
                     // TODO Auto-generated method stub
                 }
@@ -220,13 +341,11 @@ public class MainActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event)
             {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    dir = "s";
-                    onClickSend(v);
+                    onClickSend("s".getBytes());
                     Log.d("Pressed", "Button pressed");
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    dir = "x";
-                    onClickSend(v);
+                    onClickSend("x".getBytes());
                     Log.d("Released", "Button released");
                     // TODO Auto-generated method stub
                 }
@@ -240,13 +359,11 @@ public class MainActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event)
             {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    dir = "d";
-                    onClickSend(v);
+                    onClickSend("d".getBytes());
                     Log.d("Pressed", "Button pressed");
                 }
                 else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    dir = "x";
-                    onClickSend(v);
+                    onClickSend("x".getBytes());
                     Log.d("Released", "Button released");
                     // TODO Auto-generated method stub
                 }
@@ -254,59 +371,11 @@ public class MainActivity extends Activity {
             }
         });
 
-
-        /**
-         * the following code works for sending data its just its just commented out
-         * for the testing of sending two commands on ButtonPress and ButtonRelease events (Action_down)
-         * and (Action_UP). can explain what is happening if you have any concerns.
-         */
-
-//        forwardButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v){
-//                dir = "w";
-//                onClickSend(v);
-//            }
-//        });
-//        forwardButton.setOnTouchListener(new View.OnTouchListener(){
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch(event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        // PRESSED
-//                        return true; // if you want to handle the touch event
-//                    case MotionEvent.ACTION_UP:
-//                        // RELEASED
-//                        return true; // if you want to handle the touch event
-//                }
-//                return false;
-//            }
-//        });
-//        leftButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v){
-//                dir = "a";
-//                onClickSend(v);
-//            }
-//        });
-//        backButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v){
-//                dir = "s";
-//                onClickSend(v);
-//            }
-//        });
-//        rightButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v){
-//                dir = "d";
-//
-//                onClickSend(v);
-//            }
-//        });
         clearButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
                 onClickClear(v);
             }
         });
-
-        db = FirebaseFirestore.getInstance();
 
         db.collection("MARCOs")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -326,19 +395,18 @@ public class MainActivity extends Activity {
                                 //check to see if the doc is available
                                 if (doc != null) {
                                     Double lm, rm;
+                                    byte left = 0x5A, right = 0x5A;
                                     if((lm = doc.getDouble("leftMotor")) != null) {
-                                        leftMotor = lm;
-                                    } else {
-                                        leftMotor = 0;
+                                        left = (byte)((int)((double)lm) - 90);
                                     }
                                     if((rm = doc.getDouble("rightMotor")) != null) {
-                                        rightMotor = rm;
-                                    } else {
-                                        rightMotor = 0;
+                                        right = (byte)((int)((double)rm) - 90);
                                     }
 
-                                    Log.d("MOTORVAL", String.format("Left: %f, Right: %f", leftMotor, rightMotor));
-
+                                    Log.d("MOTORS", "s" + left + right);
+                                    onClickSend("s".getBytes());
+                                    byte[] bytes = {left, right};
+                                    onClickSend(bytes);
                                 }
                             }
                             //null pointer exception received
@@ -349,88 +417,47 @@ public class MainActivity extends Activity {
                     }
                 });
 
-        if(checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
+        //Check to see if location service is currently permitted
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
                 && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED) {
 
-            //get user's current location
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+            FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);  //used to get the combined network and gps data for better accuracy
+            LocationRequest mLocationRequest = new LocationRequest();                                                         //initialize the location request to be used with the FusedLocationProviderClient
 
-            //set a listener to always get the updated location
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
+            // update location every second
+            mLocationRequest.setInterval(1000);
+            mLocationRequest.setFastestInterval(1000);
 
-                boolean update = true;  //used as a flag for updating the location to firebase
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);   //set the location service to the highest accuracy possible
 
-                /**
-                 * Update the location of the current user in Firestore
-                 *
-                 * @param location - The user's current location
-                 */
+            //called when the FusedLocationProviderClient has a location update
+            LocationCallback mLocationCallback = new LocationCallback() {
+
+                //location update received
                 @Override
-                public void onLocationChanged(Location location) {
+                public void onLocationResult(LocationResult locationResult) {
+                    List<Location> locationList = locationResult.getLocations();
+                    if (locationList.size() > 0) {
 
-                    if (update) {
-
-                        //Update the location for PoloUser
+                        //The last location in the list is the newest
+                        Location location = locationList.get(locationList.size() - 1);
                         Map<String, Object> position = new HashMap<>();
-                        position.put("latitude", location.getLatitude());
-                        position.put("longitude", location.getLongitude());
+                        position.put("latitude", latitude = location.getLatitude());
+                        position.put("longitude", longitude = location.getLongitude());
 
                         //Update the location in the Firestore
                         try {
-                            db.collection("MARCOs").document("MARCO1").update("position", position);
-                        } catch (Exception nullRef) {
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).set(position);
+                        } catch (
+                                Exception nullRef) {
                             /* do nothing */
                         }
-
-                        update = false;
-
-                        //only update the location every 3 seconds
-                        new CountDownTimer(3000, 1000) {
-
-                            public void onTick(long millisUntilFinished) {
-                                /* do nothing */
-                            }
-
-                            public void onFinish() {
-                                update = true;
-                            }
-                        }.start();
                     }
-
                 }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-                    // TODO Auto-generated method stub
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-                    // TODO Auto-generated method stub
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status,
-                                            Bundle extras) {
-                    // TODO Auto-generated method stub
-                }
-            });
-
-            //Update the location in the Firestore
-            Map<String, Object> position = new HashMap<>();
-            position.put("latitude", location.getLatitude());
-            position.put("longitude", location.getLongitude());
-            FirebaseFirestore db = FirebaseFirestore.getInstance(); //initialize the Firestore
-            try {
-                db.collection("MARCOs").document("MARCO1").update("position", position);
-                Log.d("POSITION", String.format("lat: %f, long: %f", (double)position.get("latitude"), (double)position.get("longitude")));
-            } catch (Exception nullRef) {
-                /* do nothing */
-                Log.d("POSITION", "Null ref");
-            }
+            };
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());    //get updates to the user's current location
         }
-
     }
 
     public void setUiEnabled(boolean bool) {
@@ -467,12 +494,9 @@ public class MainActivity extends Activity {
 
     }
 
-    public void onClickSend(View view) {
-        String string = editText.getText().toString();
-        String temp = dir;
-        //String string = command.toString();
-        serialPort.write(temp.getBytes());
-        tvAppend(textView, "\nData Sent : " + temp + "\n");
+    public void onClickSend(byte[] bytes) {
+        serialPort.write(bytes);
+        tvAppend(textView, "\nData Sent : " + Arrays.toString(bytes) + "\n");
 
     }
 
@@ -501,8 +525,17 @@ public class MainActivity extends Activity {
 
     @Override
     public void onDestroy(){
-        super.onDestroy();
         mAuth.signOut();
+
+        // Shuts down and joins the sensor thread when this activity is destroyed
+        shutdown = true;
+        try{
+            sensorMonitorThread.join();
+            sensorQueryThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
     }
 
     public void logout(View view){
