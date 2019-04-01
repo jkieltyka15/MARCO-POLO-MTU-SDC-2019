@@ -1,15 +1,24 @@
 package edu.mtu.polocivilian;
 
+import android.location.Location;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class YourClass {
     private static YourClass INSTANCE = new YourClass();
 
     public static YourClass getInstance() {
         return INSTANCE;
     }
+    private double latitude = -600;    //latitude of the current user (-600 is an invalid value used as a flag)
+    private double longitude = -600;
+    private int threatLvl;
 
 
-
-    public boolean run(int sample_rate, short[] audio) {
+    public void run(short[] audio) {
         //our class is initialized using variable buffer as the audio source
 
         //Initializing gunshot variable and defaulting it to false
@@ -23,7 +32,6 @@ public class YourClass {
         for (int i = 0; i < audioComplex.length; i++) {
             audioComplex[i] = new Complex(audio[i], 0);
         }
-        boolean gunshot = false;
         boolean triggeredFFT = false;
         /* This is the main portion of the gunshot classification. It checks the values of the microphone if they are
          * greater than a certain threshold. If so perform a FFT and then determine if any of those values are
@@ -45,16 +53,14 @@ public class YourClass {
                 audioComplex[65534] = audioComplex[65531];
                 audioComplex[65535] = audioComplex[65531];
                 //END
-                System.out.println("FFT Analysis Triggered");
+
                 Complex[] audioFFT = FFT.fft(audioComplex);
-                System.out.println(audioFFT);
-                System.out.println("FFT Complete, beginning loop");
+
 
 
                 //only going from the 600 the 5000th bin in the FFT, everything else has minimal probability of being a gunshot
                 //and we can eliminate false positives that occur at the 0 and low freq
                 for (int j = 600; j < 5000; j++) {
-                    System.out.println("FFT loop analysis iteration: " +j);
                     //Sound has enough power to be a gunshot by fft
                     //28 million is just a ratio (0.8 to 26500 as 900 is to 28 million
                     /* this might not be the correct threshold or the right way to determine it. When
@@ -69,20 +75,23 @@ public class YourClass {
                     //350 limit is 12,000,000
                     //700 limit is 23,000,000
                     if (audioFFT[j].abs() > 12000000) {
-                        gunshot = true;
-                        return gunshot;
+                        Gunshot is_Gunshot = new Gunshot();
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        Location location = is_Gunshot.getPosition();
+                        Map<String, Object> position = new HashMap<>();
+                        position.put("latitude", latitude = location.getLatitude());
+                        position.put("longitude", longitude = location.getLongitude());
+                        position.put("threatLvl", threatLvl = is_Gunshot.getThreatLvl());
+
+                        db.collection("Gunshots").document().set(position);
+                        MainActivity.getInstance().updateUI(is_Gunshot);
+                        break;
+                        }
                     }
                 }
-
             }
-            System.out.println("Still in Voltage Loop");
-
         }
-
-        System.out.println("Done with Gunshot Classification Class");
-        return gunshot;
     }
-}
     //The result contains the mirrored imaginary portion of the FFT that we do not need, we can delete
     //this later if necessary.
 

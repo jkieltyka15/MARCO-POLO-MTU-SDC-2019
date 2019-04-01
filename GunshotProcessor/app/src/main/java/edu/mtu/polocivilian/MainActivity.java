@@ -11,6 +11,7 @@ import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioTrack;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -21,14 +22,23 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, LocationListener {
     private static MainActivity INSTANCE;
@@ -37,13 +47,17 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private LocationManager locationManager;
     public FirebaseAuth mAuth;
 
-    private Location location = null;
+    private Location location = null; //This does not appear to be the fine location we need, but if
+    //correct it will never access this instance of location, only if check permission fails
     private boolean setupComplete = false;
 
     AudioTrack audioTrack;
     boolean playing;
     boolean override;
     boolean overrideValue;
+
+    private double latitude = -600;    //latitude of the current user (-600 is an invalid value used as a flag)
+    private double longitude = -600;
 
 
     protected static MainActivity getInstance() {
@@ -70,6 +84,47 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             ActivityCompat.requestPermissions(this,
                     neededPermissions,
                     Constants.PERMISSIONS_REQUEST_ALL);
+        }
+
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
+                && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED) {
+
+            FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);  //used to get the combined network and gps data for better accuracy
+            LocationRequest mLocationRequest = new LocationRequest();                                                         //initialize the location request to be used with the FusedLocationProviderClient
+
+            // update location every 3 seconds
+            mLocationRequest.setInterval(3000);
+            mLocationRequest.setFastestInterval(3000);
+
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);   //set the location service to the highest accuracy possible
+
+            //called when the FusedLocationProviderClient has a location update
+            LocationCallback mLocationCallback = new LocationCallback() {
+
+                //location update received
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    List<Location> locationList = locationResult.getLocations();
+                    if (locationList.size() > 0) {
+
+                        //The last location in the list is the newest
+                        Location location = locationList.get(locationList.size() - 1);
+                        Map<String, Object> position = new HashMap<>();
+                        position.put("latitude", latitude = location.getLatitude());
+                        position.put("longitude", longitude = location.getLongitude());
+
+                        //Update the location in the Firestore
+                        try {
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("Civilians").document(mAuth.getCurrentUser().getUid()).set(position);
+                        } catch (
+                                Exception nullRef) {
+                            /* do nothing */
+                        }
+                    }
+                }
+            };
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());    //get updates to the user's current location
         }
     }
 
@@ -244,17 +299,23 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
     };
 
-    public void updateUI(GunshotDocument gunshot) {
+    public void updateUI(Gunshot gunshot) {
         DecimalFormat format = new DecimalFormat("##0.000000");
-        ((TextView) findViewById(R.id.txtTimestamp)).setText(gunshot.timestamp.toDate().toString());
-        ((TextView) findViewById(R.id.txtLatitude)).setText(format.format(gunshot.location.getLatitude()));
-        ((TextView) findViewById(R.id.txtLongitude)).setText(format.format(gunshot.location.getLongitude()));
-        ((TextView) findViewById(R.id.txtResult)).setText(gunshot.is_gunshot ? "GUNSHOT DETECTED" : "NO GUNSHOT DETECTED");
+        ((TextView) findViewById(R.id.txtTimestamp)).setText(gunshot.getTimestamp().toDate().toString());
+        ((TextView) findViewById(R.id.txtLatitude)).setText(format.format(gunshot.getPosition().getLatitude()));
+        ((TextView) findViewById(R.id.txtLongitude)).setText(format.format(gunshot.getPosition().getLongitude()));
+        ((TextView) findViewById(R.id.txtResult)).setText(format.format(gunshot.getThreatLvl()));
+
     }
 
     public Location getLocation() {
         return location;
     }
+
+
+
+
+
 
     @Override
     public void onLocationChanged(Location location) {
@@ -263,6 +324,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         checkEnableButtons();
     }
+
+
 
     @Override
     public void onProviderDisabled(String provider) {

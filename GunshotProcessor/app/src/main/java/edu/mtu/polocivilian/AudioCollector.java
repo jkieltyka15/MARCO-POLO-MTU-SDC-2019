@@ -1,9 +1,15 @@
 package edu.mtu.polocivilian;
 
+import android.location.Location;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.util.Log;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class AudioCollector {
@@ -19,6 +25,10 @@ public class AudioCollector {
     private boolean is_recording;
 
     private short[] last_recording;
+
+    private double latitude;
+    private double longitude;
+    private int threatLvl;
 
     public static AudioCollector getInstance() {
         return INSTANCE;
@@ -38,11 +48,25 @@ public class AudioCollector {
             recorder.read(buffer, 0, samples_per_processing_buffer);
 
             last_recording = buffer;
-            System.out.println("Last Recording set to buffer. Length of Last Recording: " +last_recording.length);
 
-            Thread processingThread = new Thread(new AudioProcessor(sample_rate, buffer));
+            if (MainActivity.getInstance().getOverrideValue()) {
 
-            processingThread.run();
+                //if "gunshot detected" switch is on
+                Gunshot is_Gunshot = new Gunshot();
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                Location location = is_Gunshot.getPosition();
+                Map<String, Object> position = new HashMap<>();
+                position.put("latitude", latitude = location.getLatitude());
+                position.put("longitude", longitude = location.getLongitude());
+                position.put("threatLvl", threatLvl = is_Gunshot.getThreatLvl());
+
+                db.collection("Gunshots").document().set(position);
+                MainActivity.getInstance().updateUI(is_Gunshot);
+            }
+            else {
+                //Run the last audio recording through FFT via Your Class
+                YourClass.getInstance().run(last_recording);
+            }
         }
     };
 
