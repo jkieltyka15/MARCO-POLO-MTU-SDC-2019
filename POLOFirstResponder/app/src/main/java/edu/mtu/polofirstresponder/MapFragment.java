@@ -207,10 +207,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                 .position(new LatLng(position.get("latitude"), position.get("longitude")))
                                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
                                                 .title("MARCO")
-                                                .snippet("Oxygen: " + Integer.toString(doc.getLong("o2").intValue())
-                                                        + " Smoke: " + Integer.toString(doc.getLong("mq2").intValue())
-                                                        + " Gas: " + Integer.toString(doc.getLong("mq5").intValue())
-                                                        + " C0: " + Integer.toString(doc.getLong("mq7").intValue()))));
+                                                .snippet( "Temp: " + Double.toString(doc.getLong("temp").doubleValue())
+                                                        + " O2: " + Double.toString(doc.getLong("o2").doubleValue())
+                                                        + " Smoke: " + Double.toString(doc.getLong("mq2").doubleValue())
+                                                        + " Gas: " + Double.toString(doc.getLong("mq5").doubleValue())
+                                                        + " C0: " + Double.toString(doc.getLong("mq7").doubleValue()))));
                                     }
                                 }
                                 //null pointer exception received
@@ -403,10 +404,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                             .position(new LatLng(position.get("latitude"), position.get("longitude")))
                                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
                                             .title("MARCO")
-                                            .snippet("Oxygen: " + Integer.toString(doc.getLong("o2").intValue())
-                                                    + " Smoke: " + Integer.toString(doc.getLong("mq2").intValue())
-                                                    + " Gas: " + Integer.toString(doc.getLong("mq5").intValue())
-                                                    + " C0: " + Integer.toString(doc.getLong("mq7").intValue()))));
+                                            .snippet( "Temp: " + Double.toString(doc.getLong("temp").doubleValue())
+                                                    + " O2: " + Double.toString(doc.getLong("o2").doubleValue())
+                                                    + " Smoke: " + Double.toString(doc.getLong("mq2").doubleValue())
+                                                    + " Gas: " + Double.toString(doc.getLong("mq5").doubleValue())
+                                                    + " C0: " + Double.toString(doc.getLong("mq7").doubleValue()))));
 
                                     //display MARCOs info if it was shown on the previous version of the marker
                                     if (isInfoWindowShown) {
