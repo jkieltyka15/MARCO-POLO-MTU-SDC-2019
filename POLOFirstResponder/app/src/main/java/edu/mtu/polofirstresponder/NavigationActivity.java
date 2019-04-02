@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -210,6 +211,10 @@ public class NavigationActivity extends AppCompatActivity
             Toast gsMessage = Toast.makeText(appContext, "Gunshot Detected", Toast.LENGTH_SHORT);
             gsMessage.setGravity(Gravity.TOP, 0, 0);
             gsMessage.show();
+
+            //vibrate the device on gunshot triggered
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(1000);
         }
 
         //logout the current user
