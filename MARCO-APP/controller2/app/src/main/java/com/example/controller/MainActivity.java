@@ -8,12 +8,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Looper;
@@ -55,7 +58,7 @@ import static android.location.LocationManager.GPS_PROVIDER;
 
 public class MainActivity extends Activity {
     public final String ACTION_USB_PERMISSION = "com.example.controller.USB_PERMISSION";
-    Button startButton, forwardButton,rightButton, leftButton,backButton, clearButton, stopButton;
+    Button startButton, forwardButton, rightButton, leftButton, backButton, clearButton, stopButton;
     TextView textView;
     EditText editText;
     UsbManager usbManager;
@@ -76,6 +79,10 @@ public class MainActivity extends Activity {
 
     private double latitude = -600;    //latitude of the MARCO (-600 is an invalid value used as a flag)
     private double longitude = -600;   //longitude of the MARCO (-600 is an invalid value used as a flag)
+
+    //required for flashlight
+    private CameraManager mCameraManager;
+    private String mCameraId;
 
     //TODO: LOCK BEFORE MODIFYING ANY OF THESE VARIABLES
     double mq2 = 0, mq5 = 0, mq7 = 0, o2 = 0, temp = 0;
@@ -100,7 +107,7 @@ public class MainActivity extends Activity {
                 lock.unlock();
             }
 
-            while(!shutdown) {
+            while (!shutdown) {
                 // If values have changed push to Firebase
                 lock.lock();
                 try {
@@ -138,7 +145,7 @@ public class MainActivity extends Activity {
     private class sensorQueryWorker implements Runnable {
         @Override
         public void run() {
-            while(!shutdown) {
+            while (!shutdown) {
                 onClickSend("123ot".getBytes());
                 try {
                     Thread.sleep(3000);
@@ -159,9 +166,9 @@ public class MainActivity extends Activity {
                 recData = new String(arg0, "UTF-8");
                 databuf += recData;
                 int index = databuf.indexOf('*');
-                if(index != -1) {
+                if (index != -1) {
                     String data = databuf.substring(0, index);
-                    databuf = databuf.substring(index+1);
+                    databuf = databuf.substring(index + 1);
                     tvAppend(textView, data);
                     char sensor = data.charAt(0);
                     double value = Double.parseDouble(data.substring(2));
@@ -214,7 +221,7 @@ public class MainActivity extends Activity {
                             serialPort.setParity(UsbSerialInterface.PARITY_NONE);
                             serialPort.setFlowControl(UsbSerialInterface.FLOW_CONTROL_OFF);
                             serialPort.read(mCallback);
-                            tvAppend(textView,"Serial Connection Opened!\n");
+                            tvAppend(textView, "Serial Connection Opened!\n");
 
                             sensorQueryThread = new Thread(new sensorQueryWorker());
                             sensorQueryThread.start();
@@ -289,24 +296,21 @@ public class MainActivity extends Activity {
         sensorMonitorThread.start();
 
         stopButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v){
+            public void onClick(View v) {
                 onClickSend("x".getBytes());
 
             }
 
         });
 
-        forwardButton.setOnTouchListener(new View.OnTouchListener()
-        {
+        forwardButton.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
+            public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     onClickSend("123ot".getBytes());
                     Log.d("Pressed", "Button pressed");
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
 //                    dir = "x";
 //                    onClickSend("x".getBytes());
 //                    Log.d("Released", "Button released");
@@ -316,17 +320,14 @@ public class MainActivity extends Activity {
             }
         });
 
-        leftButton.setOnTouchListener(new View.OnTouchListener()
-        {
+        leftButton.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
+            public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     onClickSend("a".getBytes());
                     Log.d("Pressed", "Button pressed");
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     onClickSend("x".getBytes());
                     Log.d("Released", "Button released");
                     // TODO Auto-generated method stub
@@ -334,17 +335,14 @@ public class MainActivity extends Activity {
                 return false;
             }
         });
-        backButton.setOnTouchListener(new View.OnTouchListener()
-        {
+        backButton.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
+            public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     onClickSend("s".getBytes());
                     Log.d("Pressed", "Button pressed");
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     onClickSend("x".getBytes());
                     Log.d("Released", "Button released");
                     // TODO Auto-generated method stub
@@ -352,17 +350,14 @@ public class MainActivity extends Activity {
                 return false;
             }
         });
-        rightButton.setOnTouchListener(new View.OnTouchListener()
-        {
+        rightButton.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
+            public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     onClickSend("d".getBytes());
                     Log.d("Pressed", "Button pressed");
-                }
-                else if (event.getAction() == MotionEvent.ACTION_UP) {
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     onClickSend("x".getBytes());
                     Log.d("Released", "Button released");
                     // TODO Auto-generated method stub
@@ -372,11 +367,20 @@ public class MainActivity extends Activity {
         });
 
         clearButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v){
+            public void onClick(View v) {
                 onClickClear(v);
             }
         });
 
+        //set up the camera for turning the flashlight on and off
+        mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+        try {
+            mCameraId = mCameraManager.getCameraIdList()[0];
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+
+        /* TODO: This works for now, but will fail once there are multiple MARCOs, I would suggest changing this to listen only to the document associated with this MARCO (use UID) */
         db.collection("MARCOs")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
@@ -396,11 +400,26 @@ public class MainActivity extends Activity {
                                 if (doc != null) {
                                     Double lm, rm;
                                     byte left = 0x5A, right = 0x5A;
-                                    if((lm = doc.getDouble("leftMotor")) != null) {
-                                        left = (byte)((int)((double)lm) - 90);
+                                    if ((lm = doc.getDouble("leftMotor")) != null) {
+                                        left = (byte) ((int) ((double) lm) - 90);
                                     }
-                                    if((rm = doc.getDouble("rightMotor")) != null) {
-                                        right = (byte)((int)((double)rm) - 90);
+                                    if ((rm = doc.getDouble("rightMotor")) != null) {
+                                        right = (byte) ((int) ((double) rm) - 90);
+                                    }
+
+
+                                    //check to see if the flashlight is available for use
+                                    if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+
+                                        try {
+
+                                            //check to see what the flashlight state should be
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                mCameraManager.setTorchMode(mCameraId, doc.getBoolean("light"));
+                                            }
+                                        } catch (Exception nullRef) {
+                                            /* do nothing */
+                                        }
                                     }
 
                                     Log.d("MOTORS", "s" + left + right);
@@ -462,7 +481,7 @@ public class MainActivity extends Activity {
 
     public void setUiEnabled(boolean bool) {
         startButton.setEnabled(!bool);
-       // sendButton.setEnabled(bool);
+        // sendButton.setEnabled(bool);
         stopButton.setEnabled(bool);
         textView.setEnabled(bool);
 
@@ -503,7 +522,7 @@ public class MainActivity extends Activity {
     public void onClickStop(View view) {
         setUiEnabled(false);
         serialPort.close();
-        tvAppend(textView,"\nSerial Connection Closed! \n");
+        tvAppend(textView, "\nSerial Connection Closed! \n");
 
     }
 
@@ -524,12 +543,12 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         mAuth.signOut();
 
         // Shuts down and joins the sensor thread when this activity is destroyed
         shutdown = true;
-        try{
+        try {
             sensorMonitorThread.join();
             sensorQueryThread.join();
         } catch (InterruptedException e) {
@@ -538,7 +557,7 @@ public class MainActivity extends Activity {
         super.onDestroy();
     }
 
-    public void logout(View view){
+    public void logout(View view) {
         mAuth.signOut();
         Log.d("LOGOUT", "ping");
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
