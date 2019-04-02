@@ -14,11 +14,8 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -54,9 +51,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static android.content.ContentValues.TAG;
-import static android.location.LocationManager.GPS_PROVIDER;
 
 public class MainActivity extends Activity {
+
     public final String ACTION_USB_PERMISSION = "com.example.controller.USB_PERMISSION";
     Button startButton, forwardButton, rightButton, leftButton, backButton, clearButton, stopButton;
     TextView textView;
@@ -69,10 +66,7 @@ public class MainActivity extends Activity {
     Thread sensorMonitorThread;
     Thread sensorQueryThread;
     String databuf = "";
-    //TODO: ANYTHING THAT MODIFIES THE SENSOR VALUES MUST FIRST CALL LOCK.LOCK().
-    //TODO: MODIFICATION SHOULD BE WITHIN A TRY BLOCK AND FOLLOWED BY A FINALLY BLOCK THAT CALLS LOCK.UNLOCK()
-    //TODO: A RACE CONDITION WILL EXIST OTHERWISE
-    //TODO: RACE CONDITION = BAD
+
     Lock lock = new ReentrantLock();
 
     FirebaseFirestore db;
@@ -84,17 +78,17 @@ public class MainActivity extends Activity {
     private CameraManager mCameraManager;
     private String mCameraId;
 
-    //TODO: LOCK BEFORE MODIFYING ANY OF THESE VARIABLES
+    //lock before modifying these variables
     double mq2 = 0, mq5 = 0, mq7 = 0, o2 = 0, temp = 0;
 
     // Runnable that will listen for changes on the sensor values
     private class sensorChangeDetectorWorker implements Runnable {
         private double prevMq2, prevMq5, prevMq7, prevO2, prevTemp;
-        private DocumentReference doc = db.collection("MARCOs").document("MARCO1");
+        private DocumentReference doc = db.collection("MARCOs").document("MARCO1"); //TODO: recommend switching document name to current user UID for multiple MARCOs
 
         @Override
         public void run() {
-            //TODO: SEE THIS FOR HOW TO IMPLEMENT THE LOCK
+
             lock.lock();
             try {
                 // Initialize previous values
@@ -314,7 +308,6 @@ public class MainActivity extends Activity {
 //                    dir = "x";
 //                    onClickSend("x".getBytes());
 //                    Log.d("Released", "Button released");
-                    // TODO Auto-generated method stub
                 }
                 return false;
             }
@@ -330,7 +323,6 @@ public class MainActivity extends Activity {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     onClickSend("x".getBytes());
                     Log.d("Released", "Button released");
-                    // TODO Auto-generated method stub
                 }
                 return false;
             }
@@ -345,7 +337,6 @@ public class MainActivity extends Activity {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     onClickSend("x".getBytes());
                     Log.d("Released", "Button released");
-                    // TODO Auto-generated method stub
                 }
                 return false;
             }
@@ -360,7 +351,6 @@ public class MainActivity extends Activity {
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     onClickSend("x".getBytes());
                     Log.d("Released", "Button released");
-                    // TODO Auto-generated method stub
                 }
                 return false;
             }
@@ -406,6 +396,7 @@ public class MainActivity extends Activity {
                                     if ((rm = doc.getDouble("rightMotor")) != null) {
                                         right = (byte) ((int) ((double) rm) - 90);
                                     }
+
 
                                     //check to see if the flashlight is available for use
                                     if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
