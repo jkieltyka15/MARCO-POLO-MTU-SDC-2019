@@ -2,6 +2,7 @@ package edu.mtu.polocivilian;
 
 import android.location.Location;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -74,17 +75,18 @@ public class YourClass {
                     //900 limit is 28,000,000
                     //350 limit is 12,000,000
                     //700 limit is 23,000,000
-                    if (audioFFT[j].abs() > 12000000) {
-                        Gunshot is_Gunshot = new Gunshot();
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        Location location = is_Gunshot.getPosition();
-                        Map<String, Object> position = new HashMap<>();
-                        position.put("latitude", latitude = location.getLatitude());
-                        position.put("longitude", longitude = location.getLongitude());
-                        position.put("threatLvl", threatLvl = is_Gunshot.getThreatLvl());
-
-                        db.collection("Gunshots").document().set(position);
-                        MainActivity.getInstance().updateUI(is_Gunshot);
+                    if (audioFFT[j].abs() > 30000000) {
+                        latitude = MainActivity.getInstance().getLocation().getLatitude();
+                        longitude = MainActivity.getInstance().getLocation().getLongitude();
+                        Gunshot gunshot = new Gunshot();
+                        //Update the location in the Firestore
+                        try {
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("Gunshots").document().set(gunshot);
+                        } catch (Exception nullRef) {
+                            /* do nothing */
+                        }
+                        MainActivity.getInstance().updateUI(gunshot);
                         break;
                         }
                     }

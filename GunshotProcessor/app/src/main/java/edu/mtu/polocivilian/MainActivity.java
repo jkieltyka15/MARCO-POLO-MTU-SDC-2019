@@ -27,6 +27,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -302,9 +303,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     public void updateUI(Gunshot gunshot) {
         DecimalFormat format = new DecimalFormat("##0.000000");
         ((TextView) findViewById(R.id.txtTimestamp)).setText(gunshot.getTimestamp().toDate().toString());
-        ((TextView) findViewById(R.id.txtLatitude)).setText(format.format(gunshot.getPosition().getLatitude()));
-        ((TextView) findViewById(R.id.txtLongitude)).setText(format.format(gunshot.getPosition().getLongitude()));
+        ((TextView) findViewById(R.id.txtLatitude)).setText(format.format(location.getLatitude()));
         ((TextView) findViewById(R.id.txtResult)).setText(format.format(gunshot.getThreatLvl()));
+        ((TextView) findViewById(R.id.txtLongitude)).setText(format.format(location.getLongitude()));
 
     }
 

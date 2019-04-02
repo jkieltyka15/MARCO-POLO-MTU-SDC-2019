@@ -6,6 +6,7 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -50,18 +51,15 @@ public class AudioCollector {
             last_recording = buffer;
 
             if (MainActivity.getInstance().getOverrideValue()) {
-
-                //if "gunshot detected" switch is on
-                Gunshot is_Gunshot = new Gunshot();
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                Location location = is_Gunshot.getPosition();
-                Map<String, Object> position = new HashMap<>();
-                position.put("latitude", latitude = location.getLatitude());
-                position.put("longitude", longitude = location.getLongitude());
-                position.put("threatLvl", threatLvl = is_Gunshot.getThreatLvl());
-
-                db.collection("Gunshots").document().set(position);
-                MainActivity.getInstance().updateUI(is_Gunshot);
+                latitude = MainActivity.getInstance().getLocation().getLatitude();
+                longitude = MainActivity.getInstance().getLocation().getLongitude();
+                //Update the location in the Firestore
+                try {
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("Gunshots").document().set(new Gunshot(new LatLng(latitude,longitude)));
+                } catch (Exception nullRef) {
+                    /* do nothing */
+                }
             }
             else {
                 //Run the last audio recording through FFT via Your Class
