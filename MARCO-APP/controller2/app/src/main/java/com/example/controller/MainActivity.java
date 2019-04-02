@@ -407,7 +407,6 @@ public class MainActivity extends Activity {
                                         right = (byte) ((int) ((double) rm) - 90);
                                     }
 
-
                                     //check to see if the flashlight is available for use
                                     if (getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
 
