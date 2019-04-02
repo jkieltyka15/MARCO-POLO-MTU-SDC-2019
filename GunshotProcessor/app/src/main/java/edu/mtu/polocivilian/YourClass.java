@@ -75,7 +75,7 @@ public class YourClass {
                     //900 limit is 28,000,000
                     //350 limit is 12,000,000
                     //700 limit is 23,000,000
-                    if (audioFFT[j].abs() > 30000000) {
+                    if (audioFFT[j].abs() > 12000000) {
                         latitude = MainActivity.getInstance().getLocation().getLatitude();
                         longitude = MainActivity.getInstance().getLocation().getLongitude();
                         Gunshot gunshot = new Gunshot();

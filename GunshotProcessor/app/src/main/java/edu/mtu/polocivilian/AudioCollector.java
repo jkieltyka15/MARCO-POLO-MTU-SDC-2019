@@ -50,15 +50,18 @@ public class AudioCollector {
 
             last_recording = buffer;
 
-            if (MainActivity.getInstance().getOverrideValue()) {
-                latitude = MainActivity.getInstance().getLocation().getLatitude();
-                longitude = MainActivity.getInstance().getLocation().getLongitude();
-                //Update the location in the Firestore
-                try {
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("Gunshots").document().set(new Gunshot(new LatLng(latitude,longitude)));
-                } catch (Exception nullRef) {
-                    /* do nothing */
+            if (MainActivity.getInstance().shouldOverride()) {
+
+                if (MainActivity.getInstance().getOverrideValue()) {
+                    latitude = MainActivity.getInstance().getLocation().getLatitude();
+                    longitude = MainActivity.getInstance().getLocation().getLongitude();
+                    //Update the location in the Firestore
+                    try {
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("Gunshots").document().set(new Gunshot(new LatLng(latitude, longitude)));
+                    } catch (Exception nullRef) {
+                        /* do nothing */
+                    }
                 }
             }
             else {

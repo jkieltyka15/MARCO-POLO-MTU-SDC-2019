@@ -109,8 +109,8 @@ public class NavigationActivity extends AppCompatActivity
             LocationRequest mLocationRequest = new LocationRequest();                                                         //initialize the location request to be used with the FusedLocationProviderClient
 
             // update location every 3 seconds
-            mLocationRequest.setInterval(3000);
-            mLocationRequest.setFastestInterval(3000);
+            mLocationRequest.setInterval(1000);
+            mLocationRequest.setFastestInterval(1000);
 
             mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);   //set the location service to the highest accuracy possible
 
