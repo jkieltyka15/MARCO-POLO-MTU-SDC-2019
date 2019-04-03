@@ -10,10 +10,46 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2ca10142-1c76-4687-ab0f-5ff13dc92711" name="Default Changelist" comment="Application now writes to gunshot and civilian documents. Hopefully no longer crashes, still need to test when downloaded off google but builds and works in android studio.">
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/.idea/runConfigurations.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/proguard-rules.pro" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/androidTest/java/edu/mtu/afrlcompetitionbutton/ExampleInstrumentedTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/java/edu/mtu/afrlcompetitionbutton/MainActivity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/values/colors.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/test/java/edu/mtu/afrlcompetitionbutton/ExampleUnitTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/build.gradle" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/gradle.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/gradlew" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/gradlew.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/settings.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioCollector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/YourClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/YourClass.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../POLOFirstResponder/app/src/main/java/edu/mtu/polofirstresponder/NavigationActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../POLOFirstResponder/app/src/main/java/edu/mtu/polofirstresponder/NavigationActivity.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -54,7 +90,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="gradle" value="12" />
+          <entry key="gradle" value="14" />
           <entry key="java" value="60" />
           <entry key="pro" value="1" />
           <entry key="properties" value="4" />
@@ -63,7 +99,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Groovy" value="12" />
+          <entry key="Groovy" value="14" />
           <entry key="JAVA" value="60" />
           <entry key="ProGuard File" value="1" />
           <entry key="Properties" value="4" />
@@ -144,8 +180,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="196">
-              <caret line="96" column="42" selection-start-line="96" selection-start-column="42" selection-end-line="96" selection-end-column="42" />
+            <state relative-caret-position="519">
+              <caret line="75" column="8" selection-start-line="75" selection-start-column="8" selection-end-line="75" selection-end-column="43" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#4151#5366#0" expanded="true" />
@@ -155,6 +191,24 @@
                 <element signature="e#12718#12719#0" expanded="true" />
                 <element signature="e#12749#12750#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="16" column="54" selection-start-line="16" selection-start-column="54" selection-end-line="16" selection-end-column="54" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="612">
+              <caret line="36" column="46" selection-start-line="36" selection-start-column="46" selection-end-line="36" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -177,15 +231,6 @@
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/Complex.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" selection-start-line="1" selection-end-line="124" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -443,7 +488,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" sideWeight="0.50323975" side_tool="true" weight="0.19550173" />
-      <window_info content_ui="combo" id="Project" order="1" sideWeight="0.49676025" weight="0.17041522" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" sideWeight="0.49676025" visible="true" weight="0.16989248" />
       <window_info id="Structure" order="2" side_tool="true" weight="0.3297491" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -451,7 +496,7 @@
       <window_info id="Designer" order="6" />
       <window_info id="Capture Tool" order="7" />
       <window_info anchor="bottom" id="Messages" order="0" weight="0.13144758" />
-      <window_info active="true" anchor="bottom" id="Run" order="1" visible="true" weight="0.25685784" />
+      <window_info anchor="bottom" id="Run" order="1" visible="true" weight="0.25685784" />
       <window_info anchor="bottom" id="Logcat" order="2" weight="0.55407655" />
       <window_info anchor="bottom" id="TODO" order="3" weight="0.3294509" />
       <window_info anchor="bottom" x="-371" y="163" width="1667" height="515" id="Debug" order="4" weight="0.50748754" />
@@ -550,20 +595,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="423">
-          <caret line="36" column="46" lean-forward="true" selection-start-line="36" selection-start-column="46" selection-end-line="36" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="16" column="54" lean-forward="true" selection-start-line="16" selection-start-column="54" selection-end-line="16" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioProcessor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="646">
@@ -633,10 +664,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="54" selection-start-line="16" selection-start-column="54" selection-end-line="16" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="36" column="46" selection-start-line="36" selection-start-column="46" selection-end-line="36" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="196">
-          <caret line="96" column="42" selection-start-line="96" selection-start-column="42" selection-end-line="96" selection-end-column="42" />
+        <state relative-caret-position="519">
+          <caret line="75" column="8" selection-start-line="75" selection-start-column="8" selection-end-line="75" selection-end-column="43" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#4151#5366#0" expanded="true" />

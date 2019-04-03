@@ -1,0 +1,74 @@
+package edu.mtu.afrlcompetitionbutton;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.os.Looper;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+
+        //Check to see if location service is currently permitted
+        if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
+                && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED) {
+
+            FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);  //used to get the combined network and gps data for better accuracy
+            LocationRequest mLocationRequest = new LocationRequest();                                                         //initialize the location request to be used with the FusedLocationProviderClient
+
+            // update location every 3 seconds
+            mLocationRequest.setInterval(1000);
+            mLocationRequest.setFastestInterval(1000);
+
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);   //set the location service to the highest accuracy possible
+
+            //called when the FusedLocationProviderClient has a location update
+            LocationCallback mLocationCallback = new LocationCallback() {
+
+                //location update received
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    List<Location> locationList = locationResult.getLocations();
+                    if (locationList.size() > 0) {
+
+                        //The last location in the list is the newest
+                        Location location = locationList.get(locationList.size() - 1);
+                        Map<String, Object> position = new HashMap<>();
+                        position.put("latitude", latitude = location.getLatitude());
+                        position.put("longitude", longitude = location.getLongitude());
+
+                        //Update the location in the Firestore
+                        try {
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).set(position);
+                        } catch (
+                                Exception nullRef) {
+                            /* do nothing */
+                        }
+                    }
+                }
+            };
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());    //get updates to the user's current location
+        }
+    }
+}
+
+
+
