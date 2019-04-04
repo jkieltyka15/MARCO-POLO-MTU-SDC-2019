@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         INSTANCE = this;
-        System.out.print("Stuck at permission manager");
 
         permissionManager = new PermissionManager() {
         };
@@ -52,13 +51,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+        mAuth.signInAnonymously();
         System.out.print("Instance from Firebase");
         //Check to see if location service is currently permitted
 
 
 
         setContentView(R.layout.activity_main);
-        System.out.print("Button knows what to do");
         final Button button = findViewById(R.id.button_id);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -121,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
     }
     protected static MainActivity getInstance() {return INSTANCE; }
     public Location getLocation() {
-        System.out.print("getLocation Defined");
         return location;
     }
 }
