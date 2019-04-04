@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                     if (locationList.size() > 0) {
 
                         //The last location in the list is the newest
-                        Location location = locationList.get(locationList.size() - 1);
+                        location = locationList.get(locationList.size() - 1);
                         Map<String, Object> position = new HashMap<>();
                         position.put("latitude", latitude = location.getLatitude());
                         position.put("longitude", longitude = location.getLongitude());
