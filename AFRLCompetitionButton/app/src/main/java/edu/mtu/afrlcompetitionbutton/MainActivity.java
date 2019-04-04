@@ -53,10 +53,8 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         System.out.print("Instance from Firebase");
+
         //Check to see if location service is currently permitted
-
-
-
         setContentView(R.layout.activity_main);
         System.out.print("Button knows what to do");
         final Button button = findViewById(R.id.button_id);
