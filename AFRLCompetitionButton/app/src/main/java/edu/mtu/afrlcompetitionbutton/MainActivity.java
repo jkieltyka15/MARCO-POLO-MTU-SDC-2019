@@ -12,6 +12,8 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,12 +21,19 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    private FirebaseAuth mAuth;
+
+    //assigning values for debugging
+    private double latitude = -600;
+    private double longitude = -600;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        mAuth = FirebaseAuth.getInstance();
 
         //Check to see if location service is currently permitted
         if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
@@ -33,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);  //used to get the combined network and gps data for better accuracy
             LocationRequest mLocationRequest = new LocationRequest();                                                         //initialize the location request to be used with the FusedLocationProviderClient
 
-            // update location every 3 seconds
+            // update location every 1 second
             mLocationRequest.setInterval(1000);
             mLocationRequest.setFastestInterval(1000);
 
@@ -57,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                         //Update the location in the Firestore
                         try {
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
-                            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).set(position);
+                            db.collection("Civilians").document(mAuth.getCurrentUser().getUid()).set(position);
                         } catch (
                                 Exception nullRef) {
                             /* do nothing */

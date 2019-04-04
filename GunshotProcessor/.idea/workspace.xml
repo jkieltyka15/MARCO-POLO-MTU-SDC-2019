@@ -10,46 +10,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2ca10142-1c76-4687-ab0f-5ff13dc92711" name="Default Changelist" comment="Application now writes to gunshot and civilian documents. Hopefully no longer crashes, still need to test when downloaded off google but builds and works in android studio.">
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/.idea/runConfigurations.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/proguard-rules.pro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/androidTest/java/edu/mtu/afrlcompetitionbutton/ExampleInstrumentedTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/java/edu/mtu/afrlcompetitionbutton/MainActivity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-hdpi/ic_launcher.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-hdpi/ic_launcher_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-mdpi/ic_launcher.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-mdpi/ic_launcher_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-xhdpi/ic_launcher.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/values/colors.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/values/styles.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/test/java/edu/mtu/afrlcompetitionbutton/ExampleUnitTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/gradle.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/gradlew" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/gradlew.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/settings.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/java/edu/mtu/afrlcompetitionbutton/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/java/edu/mtu/afrlcompetitionbutton/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/layout/activity_main.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../POLOFirstResponder/app/src/main/java/edu/mtu/polofirstresponder/NavigationActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../POLOFirstResponder/app/src/main/java/edu/mtu/polofirstresponder/NavigationActivity.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -180,7 +144,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="519">
+            <state relative-caret-position="-569">
               <caret line="75" column="8" selection-start-line="75" selection-start-column="8" selection-end-line="75" selection-end-column="43" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -680,7 +644,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="519">
+        <state relative-caret-position="-569">
           <caret line="75" column="8" selection-start-line="75" selection-start-column="8" selection-end-line="75" selection-end-column="43" />
           <folding>
             <element signature="imports" expanded="true" />
