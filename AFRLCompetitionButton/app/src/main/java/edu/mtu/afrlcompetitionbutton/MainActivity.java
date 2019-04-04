@@ -54,10 +54,8 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mAuth.signInAnonymously();
         System.out.print("Instance from Firebase");
+
         //Check to see if location service is currently permitted
-
-
-
         setContentView(R.layout.activity_main);
         final Button button = findViewById(R.id.button_id);
         button.setOnClickListener(new View.OnClickListener() {

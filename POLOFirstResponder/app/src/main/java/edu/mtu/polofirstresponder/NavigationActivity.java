@@ -110,7 +110,7 @@ public class NavigationActivity extends AppCompatActivity
                         FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);  //used to get the combined network and gps data for better accuracy
                         LocationRequest mLocationRequest = new LocationRequest();                                                         //initialize the location request to be used with the FusedLocationProviderClient
 
-                        // update location every 3 seconds
+                        // update location every second
                         mLocationRequest.setInterval(1000);
                         mLocationRequest.setFastestInterval(1000);
 
