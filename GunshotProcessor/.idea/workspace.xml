@@ -10,14 +10,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2ca10142-1c76-4687-ab0f-5ff13dc92711" name="Default Changelist" comment="Application now writes to gunshot and civilian documents. Hopefully no longer crashes, still need to test when downloaded off google but builds and works in android studio.">
-      <change afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/java/edu/mtu/afrlcompetitionbutton/Gunshot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__android_arch_core_common_1_0_0_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__android_arch_lifecycle_common_1_0_0_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__android_arch_lifecycle_runtime_1_0_0_aar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_animated_vector_drawable_26_0_0_aar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_appcompat_v7_26_0_0_aar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_support_annotations_26_1_0_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_support_annotations_27_1_1_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_support_compat_26_1_0_aar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_support_core_ui_26_1_0_aar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_support_core_utils_26_1_0_aar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_support_fragment_26_1_0_aar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_support_vector_drawable_26_0_0_aar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/java/edu/mtu/afrlcompetitionbutton/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/java/edu/mtu/afrlcompetitionbutton/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -76,7 +85,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="gradle" value="87" />
+          <entry key="gradle" value="89" />
           <entry key="java" value="8241" />
           <entry key="txt" value="179" />
           <entry key="xml" value="419" />
@@ -84,7 +93,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Groovy" value="87" />
+          <entry key="Groovy" value="89" />
           <entry key="JAVA" value="8241" />
           <entry key="PLAIN_TEXT" value="179" />
           <entry key="XML" value="419" />
@@ -145,11 +154,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="753">
-              <caret line="112" column="20" selection-start-line="112" selection-start-column="20" selection-end-line="113" selection-end-column="32" />
+            <state relative-caret-position="-828">
+              <caret line="75" column="43" selection-start-line="75" selection-start-column="43" selection-end-line="75" selection-end-column="43" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#4151#5366#0" expanded="true" />
@@ -172,11 +181,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="24" column="4" selection-start-line="24" selection-start-column="4" selection-end-line="24" selection-end-column="61" />
+            <state relative-caret-position="355">
+              <caret line="21" column="30" selection-start-line="21" selection-start-column="30" selection-end-line="21" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -232,7 +241,6 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/PoloUser.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/GunshotDocument.java" />
-        <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioProcessor.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/Constants.java" />
@@ -240,6 +248,7 @@
         <option value="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioCollector.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/YourClass.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/build.gradle" />
       </list>
     </option>
   </component>
@@ -304,28 +313,6 @@
             <path>
               <item name="GunshotProcessor" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="GunshotProcessor" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="GunshotProcessor" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="polocivilian" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="GunshotProcessor" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-            </path>
-            <path>
-              <item name="GunshotProcessor" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
             </path>
             <path>
               <item name="GunshotProcessor" type="1abcf292:AndroidViewProjectNode" />
@@ -464,14 +451,14 @@
       <window_info id="Designer" order="6" />
       <window_info id="Capture Tool" order="7" />
       <window_info anchor="bottom" id="Messages" order="0" weight="0.13144758" />
-      <window_info active="true" anchor="bottom" id="Run" order="1" visible="true" weight="0.18329178" />
+      <window_info anchor="bottom" id="Run" order="1" weight="0.18329178" />
       <window_info anchor="bottom" id="Logcat" order="2" weight="0.55407655" />
       <window_info anchor="bottom" id="TODO" order="3" weight="0.3294509" />
       <window_info anchor="bottom" x="-371" y="163" width="1667" height="515" id="Debug" order="4" weight="0.50748754" />
       <window_info anchor="bottom" id="Terminal" order="5" weight="0.32917705" />
       <window_info anchor="bottom" id="Event Log" order="6" side_tool="true" weight="0.3294509" />
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Build" order="8" weight="0.40099832" />
+      <window_info active="true" anchor="bottom" id="Build" order="8" visible="true" weight="0.40024936" />
       <window_info anchor="bottom" id="Android Profiler" order="9" />
       <window_info anchor="bottom" id="Find" order="10" weight="0.43926787" />
       <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
@@ -632,10 +619,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="24" column="4" selection-start-line="24" selection-start-column="4" selection-end-line="24" selection-end-column="61" />
+        <state relative-caret-position="-828">
+          <caret line="75" column="43" selection-start-line="75" selection-start-column="43" selection-end-line="75" selection-end-column="43" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4151#5366#0" expanded="true" />
+            <element signature="e#5365#5366#0" expanded="true" />
+            <element signature="e#10067#10068#0" expanded="true" />
+            <element signature="e#10120#10121#0" expanded="true" />
+            <element signature="e#12813#12814#0" expanded="true" />
+            <element signature="e#12844#12845#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -646,19 +642,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java">
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="753">
-          <caret line="112" column="20" selection-start-line="112" selection-start-column="20" selection-end-line="113" selection-end-column="32" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#4151#5366#0" expanded="true" />
-            <element signature="e#5365#5366#0" expanded="true" />
-            <element signature="e#10067#10068#0" expanded="true" />
-            <element signature="e#10120#10121#0" expanded="true" />
-            <element signature="e#12813#12814#0" expanded="true" />
-            <element signature="e#12844#12845#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="355">
+          <caret line="21" column="30" selection-start-line="21" selection-start-column="30" selection-end-line="21" selection-end-column="30" />
         </state>
       </provider>
     </entry>
