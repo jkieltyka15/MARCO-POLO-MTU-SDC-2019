@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Looper;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
@@ -32,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.karan.churi.PermissionManager.PermissionManager;
+import com.noob.noobcameraflash.managers.NoobCameraManager;
 
 
 import java.util.HashMap;
@@ -47,6 +49,8 @@ public class NavigationActivity extends AppCompatActivity
 
     private double latitude = -600;    //latitude of the current user (-600 is an invalid value used as a flag)
     private double longitude = -600;   //longitude of the current user (-600 is an invalid value used as a flag)
+
+    private CountDownTimer muzzleFlash; //timer for simulating a muzzle flash
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +107,31 @@ public class NavigationActivity extends AppCompatActivity
                 .replace(R.id.navBackground, new MapFragment())
                 .commit();
 
+        //set up the camera for turning the flashlight on and off
+        try {
+            NoobCameraManager.getInstance().init(this);
+        } catch (Exception e){
+            /* do nothing */
+        }
+
+        //setup timer for simulating a muzzle flash
+        muzzleFlash = new CountDownTimer(100,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+              /* do nothing */
+            }
+
+            //turn of the light
+            @Override
+            public void onFinish() {
+                try {
+                    NoobCameraManager.getInstance().turnOffFlash();
+                } catch (Exception e){
+                    /* do nothing */
+                }
+            }
+        };
+
         //Check to see if location service is currently permitted
         if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
                 && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED) {
@@ -110,7 +139,7 @@ public class NavigationActivity extends AppCompatActivity
             FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);  //used to get the combined network and gps data for better accuracy
             LocationRequest mLocationRequest = new LocationRequest();                                                         //initialize the location request to be used with the FusedLocationProviderClient
 
-            // update location every 3 seconds
+            // update location every second
             mLocationRequest.setInterval(1000);
             mLocationRequest.setFastestInterval(1000);
 
@@ -215,7 +244,16 @@ public class NavigationActivity extends AppCompatActivity
 
             //vibrate the device on gunshot triggered
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            v.vibrate(1000);
+            v.vibrate(100);
+
+            //simulate a muzzle-flash with the light
+            try {
+                NoobCameraManager.getInstance().turnOnFlash();  //turn on the light
+            } catch (Exception e){
+                /* do nothing */
+            }
+            muzzleFlash.cancel();  //stop the timer and reset
+            muzzleFlash.start();   //start the reset timer
         }
 
         //logout the current user

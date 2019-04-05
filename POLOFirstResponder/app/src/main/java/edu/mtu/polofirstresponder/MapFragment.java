@@ -207,7 +207,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                                 .position(new LatLng(position.get("latitude"), position.get("longitude")))
                                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
                                                 .title("MARCO")
-                                                .snippet( "Temp: " + Double.toString(doc.getLong("temp").doubleValue())
+                                                .snippet("Temp: " + Double.toString(doc.getLong("temp").doubleValue())
                                                         + " O2: " + Double.toString(doc.getLong("o2").doubleValue())
                                                         + " Smoke: " + Double.toString(doc.getLong("mq2").doubleValue())
                                                         + " Gas: " + Double.toString(doc.getLong("mq5").doubleValue())
@@ -404,7 +404,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                                             .position(new LatLng(position.get("latitude"), position.get("longitude")))
                                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
                                             .title("MARCO")
-                                            .snippet( "Temp: " + Double.toString(doc.getLong("temp").doubleValue())
+                                            .snippet("Temp: " + Double.toString(doc.getLong("temp").doubleValue())
                                                     + " O2: " + Double.toString(doc.getLong("o2").doubleValue())
                                                     + " Smoke: " + Double.toString(doc.getLong("mq2").doubleValue())
                                                     + " Gas: " + Double.toString(doc.getLong("mq5").doubleValue())
@@ -495,11 +495,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             googleMap.setMyLocationEnabled(true);
 
             //set the map to zoom in on the users location
-            locationManager = (LocationManager) this.getContext().getSystemService(Context.LOCATION_SERVICE);
-            Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
-            CameraUpdate cameraUpdate = CameraUpdateFactory
-                    .newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17);
-            mGoogleMap.animateCamera(cameraUpdate);
+            try {
+                locationManager = (LocationManager) this.getContext().getSystemService(Context.LOCATION_SERVICE);
+                Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+                CameraUpdate cameraUpdate = CameraUpdateFactory
+                        .newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17);
+                mGoogleMap.animateCamera(cameraUpdate);
+            } catch (Exception nullRef) {
+                /* do nothing */
+            }
         }
 
         //user has not permitted location, alert user to add location services permission
@@ -510,6 +514,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     /**
      * Check to see if the requested permission has been granted.
+     *
      * @param permission - The permission to be checked.
      * @return If the permission was granted.
      */
