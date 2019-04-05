@@ -8,8 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraManager;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
@@ -41,6 +39,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.noob.noobcameraflash.managers.NoobCameraManager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -73,10 +72,6 @@ public class MainActivity extends Activity {
 
     private double latitude = -600;    //latitude of the MARCO (-600 is an invalid value used as a flag)
     private double longitude = -600;   //longitude of the MARCO (-600 is an invalid value used as a flag)
-
-    //required for flashlight
-    private CameraManager mCameraManager;
-    private String mCameraId;
 
     //lock before modifying these variables
     double mq2 = 0, mq5 = 0, mq7 = 0, o2 = 0, temp = 0;
@@ -363,11 +358,10 @@ public class MainActivity extends Activity {
         });
 
         //set up the camera for turning the flashlight on and off
-        mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
-            mCameraId = mCameraManager.getCameraIdList()[0];
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
+            NoobCameraManager.getInstance().init(this);
+        } catch (Exception e){
+            /* do nothing */
         }
 
         /* TODO: This works for now, but will fail once there are multiple MARCOs, I would suggest changing this to listen only to the document associated with this MARCO (use UID) */
@@ -405,7 +399,16 @@ public class MainActivity extends Activity {
 
                                             //check to see what the flashlight state should be
                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                mCameraManager.setTorchMode(mCameraId, doc.getBoolean("light"));
+
+                                                //turn the light on
+                                                if(doc.getBoolean("light")){
+                                                    NoobCameraManager.getInstance().turnOnFlash();
+                                                }
+
+                                                //turn the light off
+                                                else{
+                                                    NoobCameraManager.getInstance().turnOffFlash();
+                                                }
                                             }
                                         } catch (Exception nullRef) {
                                             /* do nothing */

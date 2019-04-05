@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.controller"
-        minSdkVersion 21
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -50,5 +50,8 @@ dependencies {
     //Add Permission Manager Library
     implementation 'com.github.karanchuri:PermissionManager:0.1.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
+
+    //Add toggle flashlight library
+    implementation 'com.github.Abhi347:NoobCameraFlash:0.2.0'
 }
 apply plugin: 'com.google.gms.google-services'
