@@ -460,7 +460,7 @@ public class MainActivity extends Activity {
                         //Update the location in the Firestore
                         try {
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
-                            db.collection("FirstResponders").document(mAuth.getCurrentUser().getUid()).set(position);
+                            db.collection("MARCOs").document("MARCO1").update("position", position);
                         } catch (
                                 Exception nullRef) {
                             /* do nothing */
