@@ -1,4 +1,5 @@
-package edu.mtu.polocivilian_v2;
+package edu.mtu.polocivilian;
+
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Base64;
@@ -24,12 +25,13 @@ public class AudioProcessor implements Runnable {
     public void run() {
         Timestamp timestamp = Timestamp.now();
         boolean is_gunshot = MainActivity.getInstance().shouldOverride() ? MainActivity.getInstance().getOverrideValue() : YourClass.getInstance().run(sample_rate, buffer);
-
-        //ALL THIS LOCATION SHIT NEEDS TO CHANGE TO ONE TYPE OF LOCATION
         Location loc = MainActivity.getInstance().getLocation();
         GeoPoint location = new GeoPoint(loc.getLatitude(), loc.getLongitude());
         //needed for polo user class only
         LatLng latlng = new LatLng(loc.getLatitude(),loc.getLongitude());
+
+        byte[] byte_buffer = Utils.short_to_byte(buffer);
+        String audio_blob = Base64.encodeToString(byte_buffer, Base64.NO_WRAP);
 
         //The below code is a duplicate of shit but I don't want to break anything this close to competition
 
@@ -51,8 +53,11 @@ public class AudioProcessor implements Runnable {
 
         if (is_gunshot) {
 
-            db.collection("Gunshots").document().set(new Gunshot(new LatLng(location.getLatitude()  , location.getLongitude())));
+            db.collection("Gunshots").document().set(new Gunshot(new LatLng(location.getLatitude() , location.getLongitude())));
 
         }
     }
 }
+
+
+
