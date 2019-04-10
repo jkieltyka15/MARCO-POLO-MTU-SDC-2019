@@ -10,6 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2ca10142-1c76-4687-ab0f-5ff13dc92711" name="Default Changelist" comment="Application now writes to gunshot and civilian documents. Hopefully no longer crashes, still need to test when downloaded off google but builds and works in android studio.">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/java/edu/mtu/afrlcompetitionbutton/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/java/edu/mtu/afrlcompetitionbutton/MainActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/layout/activity_main.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/values/colors.xml" afterDir="false" />
@@ -26,6 +27,10 @@
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_support_core_utils_26_1_0_aar.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_support_fragment_26_1_0_aar.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__com_android_support_support_vector_drawable_26_0_0_aar.xml" beforeDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../AFRLCompetitionButton/app/src/main/res/layout/activity_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -53,7 +58,11 @@
     <session id="389582754">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
+<<<<<<< HEAD
           <entry key="project.closed" value="9" />
+=======
+          <entry key="project.closed" value="10" />
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
           <entry key="project.open.time.14" value="1" />
           <entry key="project.open.time.15" value="2" />
           <entry key="project.open.time.16" value="2" />
@@ -62,7 +71,11 @@
           <entry key="project.open.time.20" value="1" />
           <entry key="project.open.time.21" value="1" />
           <entry key="project.open.time.3" value="1" />
+<<<<<<< HEAD
           <entry key="project.opened" value="11" />
+=======
+          <entry key="project.opened" value="12" />
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -124,8 +137,13 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/YourClass.java">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="204">
               <caret line="78" selection-start-line="78" selection-end-line="87" selection-end-column="25" />
+=======
+            <state relative-caret-position="187">
+              <caret line="77" column="52" selection-start-line="77" selection-start-column="52" selection-end-line="77" selection-end-column="52" />
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -145,7 +163,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioCollector.java">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="468">
+=======
+            <state relative-caret-position="884">
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
               <caret line="64" column="17" selection-start-line="64" selection-start-column="17" selection-end-line="64" selection-end-column="17" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -157,7 +179,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="-828">
+=======
+            <state relative-caret-position="578">
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
               <caret line="75" column="43" selection-start-line="75" selection-start-column="43" selection-end-line="75" selection-end-column="43" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -311,10 +337,13 @@
         <subPane>
           <expand>
             <path>
+<<<<<<< HEAD
               <item name="GunshotProcessor" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
             </path>
             <path>
+=======
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
               <item name="GunshotProcessor" type="1abcf292:AndroidViewProjectNode" />
               <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
             </path>
@@ -322,12 +351,21 @@
           <select />
         </subPane>
       </pane>
+<<<<<<< HEAD
       <pane id="PackagesPane">
         <subPane>
           <expand>
             <path>
               <item name="GunshotProcessor" type="58d84e3e:PackageViewProjectNode" />
               <item name="app" type="616d4139:PackageViewModuleNode" />
+=======
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="GunshotProcessor" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GunshotProcessor" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
             </path>
           </expand>
           <select />
@@ -543,7 +581,13 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/GunshotDocument.java">
+=======
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/GunshotDocument.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioProcessor.java" />
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/FFT.java">
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-255">
           <caret line="11" column="30" selection-start-line="11" selection-start-column="30" selection-end-line="11" selection-end-column="30" />
@@ -560,6 +604,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1263">
@@ -568,10 +613,13 @@
       </provider>
       <provider editor-type-id="android-designer2" />
     </entry>
+=======
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
     <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/Utils.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
           <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
+<<<<<<< HEAD
         </state>
       </provider>
     </entry>
@@ -586,12 +634,18 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
           <caret line="13" column="75" selection-start-line="13" selection-start-column="75" selection-end-line="13" selection-end-column="75" />
+=======
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/AudioCollector.java">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="468">
+=======
+        <state relative-caret-position="884">
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
           <caret line="64" column="17" selection-start-line="64" selection-start-column="17" selection-end-line="64" selection-end-column="17" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -599,7 +653,11 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/Gunshot.java">
+=======
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java">
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="415">
           <caret line="58" column="1" selection-start-line="5" selection-end-line="58" selection-end-column="1" />
@@ -609,7 +667,26 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/YourClass.java">
+=======
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="24" column="8" selection-start-line="24" selection-start-column="8" selection-end-line="24" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
+      <provider editor-type-id="android-designer2" />
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="22" column="14" selection-start-line="22" selection-start-column="14" selection-end-line="28" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/Gunshot.java">
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
           <caret line="78" selection-start-line="78" selection-end-line="87" selection-end-column="25" />
@@ -619,6 +696,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-828">
@@ -646,6 +724,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="355">
           <caret line="21" column="30" selection-start-line="21" selection-start-column="30" selection-end-line="21" selection-end-column="30" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="21" column="30" selection-start-line="21" selection-start-column="30" selection-end-line="21" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/edu/mtu/polocivilian/YourClass.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="77" column="52" selection-start-line="77" selection-start-column="52" selection-end-line="77" selection-end-column="52" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+>>>>>>> parent of 4b7e8d8... MAJOR UPDATE REVERT
         </state>
       </provider>
     </entry>
