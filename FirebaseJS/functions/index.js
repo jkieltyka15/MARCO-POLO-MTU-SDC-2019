@@ -19,9 +19,9 @@ exports.startGunshotTimers = functions.firestore
     .document('Gunshots/{docID}')
     .onCreate((change, context) => {
 
-      //change the threat level to 1 after 10 seconds
-      setTimeout(threatLevel1, 10000, change);           
+      //change the threat level to 1 after 1 minute
+      setTimeout(threatLevel1, 60000, change);           
       
-      //change the threat level to 0 after 30 seconds
-      return setTimeout(threatLevel0, 30000, change);
+      //change the threat level to 0 after 5 minutes
+      return setTimeout(threatLevel0, 300000, change);
     });

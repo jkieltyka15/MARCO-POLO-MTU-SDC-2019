@@ -11,7 +11,7 @@ public class Constants {
 
     /// Required configuration for AudioRecord
     ///     If RECORDER_AUDIO_ENCODING is changed then the
-    //      short[] buffer will also need to be changed in AudioCollector / AudioProcessor
+    //      short[] buffer will also need to be changed in AudioCollector /
     protected static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
     protected static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 

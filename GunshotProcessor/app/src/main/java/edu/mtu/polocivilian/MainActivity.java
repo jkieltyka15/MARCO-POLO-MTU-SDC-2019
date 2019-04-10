@@ -11,6 +11,7 @@ import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioTrack;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -21,23 +22,24 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
-<<<<<<< HEAD
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-=======
->>>>>>> parent of a85d00a... MAJOR UPDATE
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, LocationListener {
     private static MainActivity INSTANCE;
@@ -46,13 +48,17 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private LocationManager locationManager;
     public FirebaseAuth mAuth;
 
-    private Location location = null;
+    private Location location = null; //This does not appear to be the fine location we need, but if
+    //correct it will never access this instance of location, only if check permission fails
     private boolean setupComplete = false;
 
     AudioTrack audioTrack;
     boolean playing;
     boolean override;
     boolean overrideValue;
+
+    private double latitude = -600;    //latitude of the current user (-600 is an invalid value used as a flag)
+    private double longitude = -600;
 
 
     protected static MainActivity getInstance() {
@@ -80,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     neededPermissions,
                     Constants.PERMISSIONS_REQUEST_ALL);
         }
-<<<<<<< HEAD
 
         if (checkPermission(Manifest.permission.ACCESS_FINE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED
                 && checkPermission(Manifest.permission.ACCESS_COARSE_LOCATION, android.os.Process.myPid(), android.os.Process.myUid()) == PackageManager.PERMISSION_GRANTED) {
@@ -122,8 +127,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             };
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());    //get updates to the user's current location
         }
-=======
->>>>>>> parent of a85d00a... MAJOR UPDATE
     }
 
     @Override
@@ -297,25 +300,23 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
     };
 
-    public void updateUI(GunshotDocument gunshot) {
+    public void updateUI(Gunshot gunshot) {
         DecimalFormat format = new DecimalFormat("##0.000000");
-<<<<<<< HEAD
         ((TextView) findViewById(R.id.txtTimestamp)).setText(gunshot.getTimestamp().toDate().toString());
         ((TextView) findViewById(R.id.txtLatitude)).setText(format.format(location.getLatitude()));
         ((TextView) findViewById(R.id.txtResult)).setText(format.format(gunshot.getThreatLvl()));
         ((TextView) findViewById(R.id.txtLongitude)).setText(format.format(location.getLongitude()));
 
-=======
-        ((TextView) findViewById(R.id.txtTimestamp)).setText(gunshot.timestamp.toDate().toString());
-        ((TextView) findViewById(R.id.txtLatitude)).setText(format.format(gunshot.location.getLatitude()));
-        ((TextView) findViewById(R.id.txtLongitude)).setText(format.format(gunshot.location.getLongitude()));
-        ((TextView) findViewById(R.id.txtResult)).setText(gunshot.is_gunshot ? "GUNSHOT DETECTED" : "NO GUNSHOT DETECTED");
->>>>>>> parent of a85d00a... MAJOR UPDATE
     }
 
     public Location getLocation() {
         return location;
     }
+
+
+
+
+
 
     @Override
     public void onLocationChanged(Location location) {
@@ -324,6 +325,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         checkEnableButtons();
     }
+
+
 
     @Override
     public void onProviderDisabled(String provider) {

@@ -3,9 +3,7 @@ package edu.mtu.afrlcompetitionbutton;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Build;
 import android.os.Looper;
-import android.os.VibrationEffect;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -17,11 +15,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.karan.churi.PermissionManager.PermissionManager;
 
-import android.os.Vibrator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,10 +70,6 @@ public class MainActivity extends AppCompatActivity {
                         db.collection("Gunshots").document().set(gunshot);
                     } catch (Exception nullRef) {
                         /* do nothing */
-                    }
-                    if (Build.VERSION.SDK_INT >= 26) {
-                        Vibrator vib = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-                        vib.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
                     }
                 }
 
